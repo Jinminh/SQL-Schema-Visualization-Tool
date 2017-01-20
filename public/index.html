@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="format.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    <title>
+      SQL Schema Visualization Tool
+    </title>
+  </head>
+  
+  <body bgcolor="#E6E6FA">
+    
+    <div class="login-page">
+      <div class="form">
+        <legend style="font-size:25px; color:#18348e">
+          SQL Schema Visualization Tool
+        </legend>
+        <hr style="height:2px; border:none; border-top:1px solid #444444;" />
+        <form class="login-form" action = "http://seng371-milestone1-jinminh93.codeanyapp.com:7474/process_get" method = "GET">
+          <input type="text" id="host" placeholder="Host" name="host" required/>
+          <input type="text" id="port" placeholder="Port" name="port" required/>
+          <input type="text" id="database" placeholder="Database" name="db" required/>
+          <input type="text" id="user" placeholder="Username" name="user" required/>
+          <input type="text" id="password" placeholder="Password" name="pwd" required/> 
+          <input type="submit" id="connect" value = "Connect">
+
+        </form>
+      </div>
+    </div>  
+    
+  </body>
+  
+</html>

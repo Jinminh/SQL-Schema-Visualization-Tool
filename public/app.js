@@ -24,7 +24,7 @@ window.onload = function(){
     postXhr.setRequestHeader("Content-type", "application/json");
     postXhr.send(JSON.stringify(login_data));
     
-    alert(login_data.portnumber);
+    //alert(login_data.portnumber);
   });
 
 }

@@ -14,7 +14,30 @@ app.get('/index.html', function(req, res){
   res.sendFile(__dirname + "/" + "index.html");
 });
 
+app.post('/data', function(req, res) {
+  console.log("post to data!");
+  
+  var conn = mysql.createConnection({
+    host:req.body.hostname,
+    user:req.body.username,
+    password:req.body.password,
+    database:req.body.db,
+    port:req.body.portnumber
+  });
+  
+  conn.connect(function(err) {
+    if(err){
+      console.error('error connecting ' + err.stack);
+      return;
+    }
+    
+    console.log('connected as id' + connection.threadId);
+  });
+  
+})
+
 app.get('/process_get',function(req,res){
+  console.log("Got a click!");
   response={
     hn:req.query.host,
     pn:req.query.port,

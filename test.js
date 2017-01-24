@@ -1,14 +1,21 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var mysql = require('mysql');
+var morgan = require('morgan');
 
 var app = express();
 app.use(bodyParser.json());
+app.use(morgan('combined'));
 app.use(express.static('public'));
 
 function val(someval){
   return someval;
 }
+
+app.use(function(req, res, next){
+	console.log(req);
+	next();
+});
 
 app.get('/index.html', function(req, res){
   res.sendFile(__dirname + "/" + "index.html");
@@ -45,7 +52,8 @@ app.get('/process_get',function(req,res){
     un:req.query.user,
     pwd:req.query.pwd
   }
-  //console.log(response);
+  console.log(response.db);
+  //alert(response.db);
   
   var conn = mysql.createConnection({
     host:response.hn,
@@ -62,7 +70,7 @@ app.get('/process_get',function(req,res){
   conn.query('SELECT 1+1 AS solution', function(err,rows,fields){
     if(err){
       return res.send(JSON.stringify(err));
-    } 
+    }
     
     console.log('>>>>>',rows[0].solution);
     result = rows[0].solution;

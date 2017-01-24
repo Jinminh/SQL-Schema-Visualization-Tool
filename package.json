@@ -1,0 +1,22 @@
+{
+  "name": "milestone1",
+  "version": "1.0.0",
+  "description": "Project page for milestone 1",
+  "main": "test.js",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.0",
+    "morgan": "^1.7.0",
+    "mysql": "^2.12.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://jinminh@jira.seng.uvic.ca:8051/scm/et/milestone1.git"
+  },
+  "author": "Jinmin Huang",
+  "license": "ISC"
+}

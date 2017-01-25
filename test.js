@@ -1,50 +1,21 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var mysql = require('mysql');
-var morgan = require('morgan');
 
 var app = express();
 app.use(bodyParser.json());
-app.use(morgan('combined'));
 app.use(express.static('public'));
 
 function val(someval){
   return someval;
 }
 
-app.use(function(req, res, next){
-	console.log(req);
-	next();
-});
-
 app.get('/index.html', function(req, res){
   res.sendFile(__dirname + "/" + "index.html");
 });
 
-app.post('/data', function(req, res) {
-  console.log("post to data!");
-  
-  var conn = mysql.createConnection({
-    host:req.body.hostname,
-    user:req.body.username,
-    password:req.body.password,
-    database:req.body.db,
-    port:req.body.portnumber
-  });
-  
-  conn.connect(function(err) {
-    if(err){
-      console.error('error connecting ' + err.stack);
-      return;
-    }
-    
-    console.log('connected as id' + connection.threadId);
-  });
-  
-})
-
+//get database information from client side
 app.get('/process_get',function(req,res){
-  console.log("Got a click!");
   response={
     hn:req.query.host,
     pn:req.query.port,
@@ -52,29 +23,70 @@ app.get('/process_get',function(req,res){
     un:req.query.user,
     pwd:req.query.pwd
   }
-  console.log(response.db);
-  //alert(response.db);
-  
+
+  //create connection parameters
   var conn = mysql.createConnection({
     host:response.hn,
     user:response.un,
     password:response.pwd,
-    database:response.db,
+    database:'information_schema',
     port:response.pn
   });
   
   var result;
   
+  //create connection
   conn.connect();
   
-  conn.query('SELECT 1+1 AS solution', function(err,rows,fields){
+  //search table names first 
+  conn.query('SELECT TABLE_NAME FROM TABLES Where table_schema =?', [response.db],function(err,tables,fields){
+    var jsonObj = [];
+    
+    console.log('connected');
+    console.log('\n');
     if(err){
       return res.send(JSON.stringify(err));
+    } 
+   
+    var count = 0;
+    for (var i in tables) {    
+        
+        //according to table names, select columns for each table
+        conn.query('SELECT COLUMN_NAME FROM `COLUMNS` WHERE TABLE_NAME = ?',[tables[i].TABLE_NAME], function(err, cols, fields){
+          if(err){
+            return res.send(JSON.stringify(err));
+          }
+          
+          var item = {};
+          item[' table'+count] = tables[count].TABLE_NAME;
+          console.log('table'+count +':', tables[count].TABLE_NAME);
+          
+          for(var j in cols){
+            console.log('cols'+j +':', cols[j].COLUMN_NAME);
+            
+//             conn.query('SELECT CONSTRAINT_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME FROM `KEY_COLUMN_USAGE` WHERE TABLE_NAME=? AND COLUMN_NAME=?'
+//                       , [tables[count].TABLE_NAME, cols[j].COLUMN_NAME], function(err, constraints, fields){
+//               if(err){
+//                 return res.send(JSON.stringify(err));
+//               }
+              
+//               console.log('constraints'+':', cols[j], constraints[0].CONSTRAINT_NAME, constraints[0].REFERENCED_TABLE_NAME, constraints[0].REFERENCED_COLUMN_NAME);
+//               console.log('\n');  
+              
+//             });
+            
+            
+            item['col'+j] = cols[j].COLUMN_NAME;
+          }
+          
+          count++;
+          console.log('\n');
+          jsonObj.push(item);
+          if (count == Object.keys(tables).length){
+            res.end(JSON.stringify(jsonObj));
+          }
+        });
     }
-    
-    console.log('>>>>>',rows[0].solution);
-    result = rows[0].solution;
-    res.send('conneted');
   });
   
   //res.end('connected');
@@ -92,20 +104,4 @@ var server = app.listen(7474, function(){
 
 
 
-
-// var connection = mysql.createConnection({
-//   host: 'test.ci9et1hjxavg.us-west-2.rds.amazonaws.com',
-//   user: 'root',
-//   password: 'testdbpwd',
-//   database: 'testdb'
-// });
-
-// connection.connect();
-
-// connection.query('SELECT 1+1 AS solution', function(err, rows, fields){
-//   if(err)
-// //     throw err;
-//     console.log(err);
-//   console.log('solution is: ', rows[0].solution);
-// });
 

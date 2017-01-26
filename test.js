@@ -1,6 +1,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var mysql = require('mysql');
+var fs = require('fs');
 
 var app = express();
 app.use(bodyParser.json());
@@ -9,10 +10,13 @@ app.use(express.static('public'));
 function val(someval){
   return someval;
 }
+// on load get connections from local file
 
 app.get('/index.html', function(req, res){
   res.sendFile(__dirname + "/" + "index.html");
 });
+
+//app.use(express.static(__dirname + '/public'));
 
 //get database information from client side
 app.get('/process_get',function(req,res){
@@ -36,8 +40,22 @@ app.get('/process_get',function(req,res){
   var result;
   
   //create connection
-  conn.connect();
-  
+  conn.connect(function(err) {
+    if(err){
+      console.error('error connecting ' + err.stack);
+      res.redirect('public/index.html')
+      return res.send(JSON.stringify(err));
+      // might wanna redirect to home
+    }
+  });
+  // after connection save to a local file
+  fs.writeFile(__dirname + "/connection.txt", JSON.stringify(response),  function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("The file was saved!");
+});
   //search table names first 
   conn.query('SELECT TABLE_NAME FROM TABLES Where table_schema =?', [response.db],function(err,tables,fields){
     var jsonObj = [];
@@ -83,6 +101,8 @@ app.get('/process_get',function(req,res){
           console.log('\n');
           jsonObj.push(item);
           if (count == Object.keys(tables).length){
+           //res.render("process_get")
+            //res.sendFile(__dirname+'\\public\\process_get.html');
             res.end(JSON.stringify(jsonObj));
           }
         });

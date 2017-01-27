@@ -3,28 +3,18 @@
 // // function connection(){
   
 // // }
-// window.onload = function(){
-//   document.getElementById('connect').addEventListener('click', function(event){
-// //     var hostname = $('#host').val();
-// //     var portnumber = $('#port').val();
-// //     var db = $('#database').val();
-// //     var username = $('#user').val();
-// //     var password = $('#password').val();
-    
-//     var login_data = {
-//       hostname: $('#host').val(),
-//       portnumber: $('#port').val(),
-//       db: $('#database').val(),
-//       username: $('#user').val(),
-//       password: $('#password').val(),
-//     };
-    
-//     var postXhr = new XMLHttpRequest();
-//     postXhr.open("POST", "/data", true);
-//     postXhr.setRequestHeader("Content-type", "application/json");
-//     postXhr.send(JSON.stringify(login_data));
-    
-//     //alert(login_data.portnumber);
-//   });
-
-// }
+ window.onload = function(){
+         // xmlhttprequest - get data from my connection endpoint or something
+         // in the response make use of the data we've asked for
+         var requestTables = new XMLHttpRequest()
+         requestTables.onreadystatechange = function()
+         {
+             if (requestTables.readyState == 4)
+             {
+                 var details = "DONE HERE ARE MY DETAIL <br/>" + requestTables.responseText
+                 document.getElementById("myDiagramDiv").innerHTML = details
+             }
+         }
+         requestTables.open('GET', 'http://localhost:7474/tabledata', true)
+         requestTables.send(null)
+ }

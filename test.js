@@ -7,6 +7,14 @@ var app = express();
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+// add a get_data endpoint
+
+var TABLES = null;
+
+app.get("/tabledata", function(req, res) {
+  res.send(TABLES);
+})
+
 function removeDuplicates(arr) {
      var new_arr = [];
      var lookup  = {};
@@ -45,7 +53,7 @@ app.get('/index.html', function(req, res){
 //app.use(express.static(__dirname + '/public'));
 
 //get database information from client side
-app.get('/process_get',function(req,res){
+app.get('/proceget',function(req,res){
   response={
     hn:req.query.host,
     pn:req.query.port,
@@ -182,7 +190,10 @@ var jsonObj = [];
                if(cnt == col_cnt){
                   var final_obj = removeDuplicates(jsonObj);
                   console.log('res.send!!!');
-                  res.end(JSON.stringify(final_obj));
+                  
+                  //res.send(JSON.stringify(final_obj));
+                  TABLES = JSON.stringify(final_obj)
+                  res.redirect("http://localhost:7474/process_get.html")
                 }
             });           
           }

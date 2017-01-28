@@ -75,7 +75,7 @@ app.get('/proceget',function(req,res){
   conn.connect(function(err) {
     if(err){
       console.error('error connecting ' + err.stack);
-      res.redirect('public/index.html')
+      res.redirect('/index.html')
       return res.send(JSON.stringify(err));
       // might wanna redirect to home
     }

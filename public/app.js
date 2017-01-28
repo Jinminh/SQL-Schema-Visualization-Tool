@@ -5,11 +5,11 @@ var displayedTable = {}
  {
      var list = document.getElementById("myTableList")
      tables = {};
-     for(i=0; i<tableobj.length; i++)
+     for(var i=0; i<tableobj.length; i++)
      {
          var Val = tableobj[i]["table"+i]
          var obj = [];
-         for(j=0; j<Object.keys(tableobj[i]).length-1; j++)
+         for(var j=0; j<Object.keys(tableobj[i]).length-1; j++)
          {
              obj[j] = tableobj[i]['col'+j]
          }
@@ -27,15 +27,34 @@ var displayedTable = {}
             {
                 displayedTable[value] = tables[value]
             }
-            displayTable()
+            displayTable(displayedTable)
         }, false);})(Val)
      }
      
  }
  
- function displayTable() {
-    var $ = go.GraphObject.make;
-    var myDiagram = $(go.Diagram, "myDiagramDiv");
+ function displayTable(dataTable) {
+    
+      // create the model for the E-R diagram
+    var nodeDataArray = []
+    var linkDataArray = []
+    console.log('will our loop run?')
+    var keys = Object.keys(dataTable)
+    for(var j=0; j < keys.length; j++)
+    {
+      var columns = []
+      for(var i=0; i < dataTable[keys[j]].length; i++)
+      {
+          columns.push({"name":dataTable[keys[j]][i]['name']})
+          if(dataTable[keys[j]][i]['referenced_table_name'] !== null && dataTable[keys[j]][i]['referenced_table_name'] !== undefined)
+          {
+              linkDataArray.push({"from":keys[j],'to':dataTable[keys[j]][i]['referenced_table_name']})
+          }
+      }
+      nodeDataArray.push({"key":keys[j], "items":columns})
+      console.log(dataTable[keys[j]])
+    }
+    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
       
 }
  window.onload = function(){
@@ -46,11 +65,119 @@ var displayedTable = {}
     {
         if (requestTables.readyState == 4)
         {
+            setupDiagram()
             loadList(JSON.parse(requestTables.responseText))
         }
     }
     requestTables.open('GET', 'http://localhost:7474/tabledata', true)
     requestTables.send(null)
+ }
+ 
+ function setupDiagram() {
+    var $ = go.GraphObject.make;
+    myDiagram = $(go.Diagram, "myDiagramDiv",
+    {   initialContentAlignment: go.Spot.Center,
+        allowDelete:false,
+        allowCopy: false,
+        layout: $(go.ForceDirectedLayout),
+        "undoManager.isEnabled":true
+    });
+    
+    var bluegrad = $(go.Brush, "Linear", { 0: "rgb(150,150,250)", 0.5:"rgb(86, 86, 186)", 1: "rgb(86, 86, 186)" });
+    var greengrad = $(go.Brush, "Linear", { 0: "rgb(158, 209, 159)", 1: "rgb(67, 101, 56)" });
+    var redgrad = $(go.Brush, "Linear", { 0: "rgb(206, 106, 100)", 1: "rgb(180, 56, 50)" });
+    var yellowgrad = $(go.Brush, "Linear", { 0: "rgb(254, 221, 50)", 1: "rgb(254, 182, 50)" });
+    var lightgrad = $(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
+    
+    // the template for each attribute in a node's array of item data
+    var itemTempl =
+      $(go.Panel, "Horizontal",
+        $(go.Shape,
+          { desiredSize: new go.Size(10, 10) },
+          new go.Binding("figure", "figure"),
+          new go.Binding("fill", "color")),
+        $(go.TextBlock,
+          { stroke: "#333333",
+            font: "bold 14px sans-serif" },
+          new go.Binding("text", "name"))
+      );
+    
+     myDiagram.nodeTemplate =
+      $(go.Node, "Auto",  // the whole node panel
+        { selectionAdorned: true,
+          resizable: true,
+          layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
+          fromSpot: go.Spot.AllSides,
+          toSpot: go.Spot.AllSides,
+          isShadowed: true,
+          shadowColor: "#C5C1AA" },
+        new go.Binding("location", "location").makeTwoWay(),
+        // define the node's outer shape, which will surround the Table
+        $(go.Shape, "Rectangle",
+          { fill: lightgrad, stroke: "#756875", strokeWidth: 3 }),
+        $(go.Panel, "Table",
+          { margin: 8, stretch: go.GraphObject.Fill },
+          $(go.RowColumnDefinition, { row: 0, sizing: go.RowColumnDefinition.None }),
+          // the table header
+          $(go.TextBlock,
+            {
+              row: 0, alignment: go.Spot.Center,
+              margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
+              font: "bold 16px sans-serif"
+            },
+            new go.Binding("text", "key")),
+          // the collapse/expand button
+          $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
+            { row: 0, alignment: go.Spot.TopRight }),
+          // the list of Panels, each showing an attribute
+          $(go.Panel, "Vertical",
+            {
+              name: "LIST",
+              row: 1,
+              padding: 3,
+              alignment: go.Spot.TopLeft,
+              defaultAlignment: go.Spot.Left,
+              stretch: go.GraphObject.Horizontal,
+              itemTemplate: itemTempl
+            },
+            new go.Binding("itemArray", "items"))
+        )  // end Table Panel
+      ); 
+      
+      // define the Link template, representing a relationship
+    myDiagram.linkTemplate =
+      $(go.Link,  // the whole link panel
+        {
+          selectionAdorned: true,
+          layerName: "Foreground",
+          reshapable: true,
+          routing: go.Link.AvoidsNodes,
+          corner: 5,
+          curve: go.Link.JumpOver
+        },
+        $(go.Shape,  // the link shape
+          { stroke: "#303B45", strokeWidth: 2.5 }),
+        $(go.TextBlock,  // the "from" label
+          {
+            textAlign: "center",
+            font: "bold 14px sans-serif",
+            stroke: "#1967B3",
+            segmentIndex: 0,
+            segmentOffset: new go.Point(NaN, NaN),
+            segmentOrientation: go.Link.OrientUpright
+          },
+          new go.Binding("text", "text")),
+        $(go.TextBlock,  // the "to" label
+          {
+            textAlign: "center",
+            font: "bold 14px sans-serif",
+            stroke: "#1967B3",
+            segmentIndex: -1,
+            segmentOffset: new go.Point(NaN, NaN),
+            segmentOrientation: go.Link.OrientUpright
+          },
+          new go.Binding("text", "toText"))
+      );
  }
  
 

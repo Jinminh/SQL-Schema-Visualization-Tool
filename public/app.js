@@ -178,6 +178,11 @@ var displayedTable = {}
           },
           new go.Binding("text", "toText"))
       );
+      document.getElementById("layoutList").addEventListener("click", function(e){
+        if(e.target && e.target.nodeName == "LI"){
+          myDiagram.layout = $(go[e.target.id])
+        }
+      });
  }
  
 

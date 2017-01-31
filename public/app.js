@@ -14,6 +14,21 @@ var displayedTable = {}
              obj[j] = tableobj[i]['col'+j]
          }
          tables[Val] = obj
+         tables[Val].referencedTables = [];
+     }
+        for(var i=0; i<tableobj.length; i++)
+     {
+          var Val = tableobj[i]["table"+i]
+          var keys = Object.keys(tables[Val])
+          for(var j=0; j<Object.keys(tables[Val]).length-1; j++)
+         {
+          if(tables[Val][j]['referenced_table_name'] !== null && tables[Val][j]['referenced_table_name'] !== undefined){
+              if($.inArray(tables[Val][j]['referenced_table_name'], tables[Val].referencedTables) == -1)
+                    tables[Val].referencedTables.push(tables[Val][j]['referenced_table_name']);
+              if($.inArray(Val, tables[tables[Val][j]['referenced_table_name']].referencedTables) == -1)
+                    tables[tables[Val][j]['referenced_table_name']].referencedTables.push(Val);
+             }
+         }
          var newLi = document.createElement('li');
          newLi.appendChild(document.createTextNode(Val));
          list.appendChild(newLi);
@@ -31,6 +46,16 @@ var displayedTable = {}
         }, false);})(Val)
      }
      
+ }
+
+ function expandTree(data){
+   displayedTable[data.key].referencedTables.forEach(function(element) {
+     if(displayedTable[element] == undefined)
+     {
+       displayedTable[element] = tables[element]
+     }
+   }, this);
+   displayTable(displayedTable)
  }
  
  function displayTable(dataTable) {
@@ -92,10 +117,6 @@ var displayedTable = {}
     // the template for each attribute in a node's array of item data
     var itemTempl =
       $(go.Panel, "Horizontal",
-        $(go.Shape,
-          { desiredSize: new go.Size(10, 10) },
-          new go.Binding("figure", "figure"),
-          new go.Binding("fill", "color")),
         $(go.TextBlock,
           { stroke: "#333333",
             font: "bold 14px sans-serif" },
@@ -126,6 +147,7 @@ var displayedTable = {}
               font: "bold 16px sans-serif"
             },
             new go.Binding("text", "key")),
+            { click: function(e, obj) { expandTree(obj.part.data); } },
           // the collapse/expand button
           $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
             { row: 0, alignment: go.Spot.TopRight }),

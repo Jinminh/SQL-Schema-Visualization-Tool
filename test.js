@@ -2,18 +2,32 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var mysql = require('mysql');
 var fs = require('fs');
+var path = require('path'); 
+var prependFile = require('prepend-file');
+var process = require('process');
 
 var app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
 // add a get_data endpoint
 
 var TABLES = null;
 
+var conn_arr=[];
+
 app.get("/tabledata", function(req, res) {
   res.send(TABLES);
 })
+
+function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
 
 function removeDuplicates(arr) {
      var new_arr = [];
@@ -41,19 +55,58 @@ function removeDuplicates(arr) {
        }
      }
      return new_arr;
-     
-    
 }
+
+
+function get_connections_from_file(filename){
+  fs.readFile(filename,function(err, data){
+    if(err){
+      return console.error(err);
+    }
+    if(isEmpty(data)){
+      console.log('im empty');
+    }else
+      for(var i=0; i<JSON.parse(data).length; i++){
+        conn_arr.push(JSON.parse(data)[i]);  
+      }      
+  });
+}
+      
+
 // on load get connections from local file
 
 app.get('/index.html', function(req, res){
   res.sendFile(__dirname + "/" + "index.html");
 });
 
-//app.use(express.static(__dirname + '/public'));
 
-//get database information from client side
+app.get('/get_connections', function(req,res){
+  //console.log('get_connections: ' + JSON.stringify(req.body));
+  res.end(JSON.stringify(conn_arr));
+});
+
+
+
+app.post('/save_connection', function(req,res){
+  console.log('save_connection: ' + req.body.conn_name);
+  for(var i in conn_arr){
+    if(conn_arr[i].conn_name == req.body.conn_name){
+      console.log('name already exist!!!');
+      return res.end('Connction name already exist!!!\nPlease re-enter a name');
+    }
+  }
+  
+  conn_arr.push(req.body);
+  fs.writeFile(__dirname+'/connection.json', JSON.stringify(conn_arr), function(err){
+    console.log('im writng file!!!'+conn_arr);
+    return console.error(err);
+  });
+  res.end('Connction Saved');
+});
+
 app.get('/proceget',function(req,res){
+ // console.log("im here>>>>>>>>"+JSON.stringify(req.query));
+  
   response={
     hn:req.query.host,
     pn:req.query.port,
@@ -80,22 +133,12 @@ app.get('/proceget',function(req,res){
       // might wanna redirect to home
     }
   });
-  // after connection save to a local file
-  fs.writeFile(__dirname + "/connection.txt", JSON.stringify(response),  function(err) {
-    if(err) {
-        return console.log(err);
-    }
-
-    console.log("The file was saved!");
-});
-  
+  // after connection save to a local file  
   
 var jsonObj = [];
     
   //search table names first 
   conn.query('SELECT TABLE_NAME FROM TABLES Where table_schema =?', [response.db],function(err,tables,fields){
-    
-    
     console.log('connected');
     console.log('\n');
     if(err){
@@ -193,7 +236,7 @@ var jsonObj = [];
                   
                   //res.send(JSON.stringify(final_obj));
                   TABLES = JSON.stringify(final_obj)
-                  res.redirect("http://localhost:7474/process_get.html")
+                  res.redirect("/process_get.html")
                 }
             });           
           }
@@ -204,13 +247,35 @@ var jsonObj = [];
   
 })
               
-
-
-var server = app.listen(7474, function(){
+var server = app.listen(8474, function(){
   var host = server.address().address;
   var port = server.address().port;
   console.log("Exa listening at http://%s:%s",host,port);
+  get_connections_from_file(__dirname+'/connection.json');
 })
+
+// process.on('SIGINT', function(code) {
+//    save_connections_to_file(__dirname+'/connection.json', 'JSON.stringify(conn_arr)');
+//    console.log('ctrl + c:', code);
+// //    setTimeout(function(){process.exit(0)}
+// //                         ,100);
+// });
+
+// process.on('exit', function(code) {
+//    save_connections_to_file(__dirname+'/connection.json',' JSON.stringify(conn_arr)');
+//    console.log('exit:', code);
+//    setTimeout(function(){process.exit(code)}
+//                         ,100);
+// });
+
+// process.on('uncaughtException', function(code) {
+//    save_connections_to_file(__dirname+'/connection.json', 'JSON.stringify(conn_arr)');
+//    console.log('uncaughtException:', code);
+//    setTimeout(function(){process.exit(1)}
+//                         ,100);
+// });
+
+
 
 
 

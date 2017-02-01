@@ -7,17 +7,28 @@
   <!-- The DIV for a Diagram needs an explicit size or else we will not see anything.
      In this case we also add a background color so we can see that area. -->
      <script src="app.js"></script>
+  <link rel="stylesheet" type="text/css" href="format.css">
 </head>
 <body>
-    <div id="myDiagramDiv"
-     style="width:800px; height:1000px; background-color: #DAE4E4;"></div>
- <ul id="myTableList" style="width:400px; height:1000px"/>
- <ul id="layoutList">
-     <li id="CircularLayout">circular layout</li>
-     <li id="ForceDirectedLayout">force directed layout</li>
-     <li id="GridLayout">grid layout</li>
-     <li id="LayeredDigraphLayout">layered digraph layout</li>
-     <li id="TreeLayout">tree layout</li>
- </ul>
+    <div id = "outside-frame">
+      <div id="myDiagramDiv"> </div>
+      <div id="column">
+        <ul id="layoutList">
+           <li id="CircularLayout">circular layout</li>
+           <li id="ForceDirectedLayout">force directed layout</li>
+           <li id="GridLayout">grid layout</li>
+           <li id="LayeredDigraphLayout">layered digraph layout</li>
+           <li id="TreeLayout">tree layout</li>
+         </ul>
+        <br/>
+        <input type="button" id="export" value = "Export Diagram to Image"/>
+        <br/>
+        <h2>
+          Table List
+        </h2>
+        <ul id="myTableList"/>
+
+      </div>
+    </div>
 </body>
 </html>

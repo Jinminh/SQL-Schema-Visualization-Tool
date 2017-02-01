@@ -93,11 +93,11 @@ var displayedTable = {}
     {
         if (requestTables.readyState == 4)
         {
-            setupDiagram()
-            loadList(JSON.parse(requestTables.responseText))
+            setupDiagram();
+            loadList(JSON.parse(requestTables.responseText));
         }
     }
-    requestTables.open('GET', 'http://localhost:7474/tabledata', true)
+    requestTables.open('GET', '/tabledata', true)
     requestTables.send(null)
  }
  

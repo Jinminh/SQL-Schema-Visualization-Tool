@@ -18,6 +18,7 @@ var TABLES = null;
 var conn_arr=[];
 
 app.get("/tabledata", function(req, res) {
+  console.log('im table>>>'+TABLES);
   res.send(TABLES);
 })
 
@@ -235,7 +236,8 @@ var jsonObj = [];
                   console.log('res.send!!!');
                   
                   //res.send(JSON.stringify(final_obj));
-                  TABLES = JSON.stringify(final_obj)
+                  TABLES = JSON.stringify(final_obj);
+                  //res.send(TABLES);
                   res.redirect("/process_get.html")
                 }
             });           

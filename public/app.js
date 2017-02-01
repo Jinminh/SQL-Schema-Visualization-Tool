@@ -62,8 +62,7 @@ var displayedTable = {}
  }
  
  function displayTable(dataTable) {
-    
-      // create the model for the E-R diagram
+    // create the model for the E-R diagram
     var nodeDataArray = []
     var linkDataArray = []
     console.log('will our loop run?')
@@ -100,7 +99,52 @@ var displayedTable = {}
     requestTables.open('GET', '/tabledata', true)
     requestTables.send(null)
  }
+
+ function base64toBlob(base64Data, contentType) {
+    contentType = contentType || '';
+    var sliceSize = 1024;
+    var data = base64Data.substr(base64Data.indexOf(",") + 1)
+    var byteCharacters = atob(data);
+    var bytesLength = byteCharacters.length;
+    var slicesCount = Math.ceil(bytesLength / sliceSize);
+    var byteArrays = new Array(slicesCount);
+
+    for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+        var begin = sliceIndex * sliceSize;
+        var end = Math.min(begin + sliceSize, bytesLength);
+
+        var bytes = new Array(end - begin);
+        for (var offset = begin, i = 0 ; offset < end; ++i, ++offset) {
+            bytes[i] = byteCharacters[offset].charCodeAt(0);
+        }
+        byteArrays[sliceIndex] = new Uint8Array(bytes);
+    }
+    return new Blob(byteArrays, { type: contentType });
+}
  
+ function exportLocal( filename) {
+   myDiagram.scale = 1;
+
+    var imgBlob = myDiagram.makeImageData({
+    background:'white',
+    type: "image/png"
+    });
+
+    var a = document.createElement("a")
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(base64toBlob(imgBlob, "image/png"), filename);
+    else { // Others
+        var url = URL.createObjectURL(base64toBlob(imgBlob, "image/png"));
+        a.href = url;
+        a.download = "image/png";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
+}
  function setupDiagram() {
     var $ = go.GraphObject.make;
     myDiagram = $(go.Diagram, "myDiagramDiv",

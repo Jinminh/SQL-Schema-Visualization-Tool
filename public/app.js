@@ -49,13 +49,16 @@ var displayedTable = {}
  }
 
  function expandTree(data){
+   var reloadTable = false;
    displayedTable[data.key].referencedTables.forEach(function(element) {
      if(displayedTable[element] == undefined)
      {
        displayedTable[element] = tables[element]
+       reloadTable = true;
      }
    }, this);
-   displayTable(displayedTable)
+   if(reloadTable)
+      displayTable(displayedTable)
  }
  
  function displayTable(dataTable) {
@@ -147,7 +150,7 @@ var displayedTable = {}
               font: "bold 16px sans-serif"
             },
             new go.Binding("text", "key")),
-            { click: function(e, obj) { expandTree(obj.part.data); } },
+            { doubleClick: function(e, obj) { expandTree(obj.part.data); } },
           // the collapse/expand button
           $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
             { row: 0, alignment: go.Spot.TopRight }),

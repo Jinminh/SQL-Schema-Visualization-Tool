@@ -1,6 +1,26 @@
 
 var tables
 var displayedTable = {}
+
+function filter() {
+    // Declare variables
+    var input, filter, ul, li, a, i;
+    input = $('#myInput')
+    filter = input[0].value.toUpperCase()
+    ul = $("#myTableList")
+    li = ul[0].getElementsByTagName('li');
+
+    // Loop through all list items, and hide those who don't match the search query
+    for (i = 0; i < li.length; i++) {
+        a = li[i]
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+        }
+    }
+}
+
  function loadList(tableobj)
  {
      var list = document.getElementById("myTableList")

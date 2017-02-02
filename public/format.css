@@ -101,10 +101,7 @@ nav ul{overflow:hidden; overflow-y:scroll;}
   width:18%;
 }
 
-#export{
-  margin-left:20px;
-  height:30px;
-}
+
 
 ul{
   list-style:none;
@@ -121,6 +118,25 @@ li{
   color:blue;
   margin:8px 0;
   cursor: pointer;
+}
+
+#export{
+  background: lightsteelblue;
+  border-color: black;
+  border-width: 1.5px;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 12px;
+  margin-left: 20px;
+}
+
+#myInput{
+  font-size: 16px; /* Increase font-size */
+    padding: 12px 20px 12px 20px; /* Add some padding */
+    border: 1px solid #ddd; /* Add a grey border */
+    margin-bottom: 6px; /* Add some space below the input */
+    margin-top: 12px;
+    margin-left: 20px;
 }
 
 

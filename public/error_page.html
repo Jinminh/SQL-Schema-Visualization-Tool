@@ -1,0 +1,25 @@
+<!DOCTYPE html>  <!-- HTML5 document type -->
+<html>
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <!-- use go-debug.js when developing and go.js when deploying -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gojs/1.6.7/go-debug.js"></script>
+  <!-- The DIV for a Diagram needs an explicit size or else we will not see anything.
+     In this case we also add a background color so we can see that area. -->
+  <link rel="stylesheet" type="text/css" href="format.css">
+</head>
+<body>
+    <div>
+      Connection failed!
+    </div>
+    </br>
+    <button id = "goback">
+        Login Page
+    </button>
+    <script>
+      $( "#goback").click(function() {
+        $(location).attr('href','/index.html');
+      });
+    </script>
+</body>
+</html>

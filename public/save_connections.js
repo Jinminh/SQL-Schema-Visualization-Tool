@@ -8,6 +8,12 @@ function isEmpty(obj) {
 
 
 $( document ).ready(function() {
+// 	$("#connect").click(function(){
+// 			$.get( "error_handling", function(data){
+// 				alert(data);
+// 			});
+// 	});
+
 	
 	$("#dpbtn").click(function(){
 		var ourdata=[];

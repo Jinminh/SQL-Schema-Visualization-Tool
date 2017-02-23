@@ -146,7 +146,7 @@ function filter() {
    myDiagram.scale = 1;
 
     var imgBlob = myDiagram.makeImageData({
-    background:'white',
+    scale:1,
     type: "image/png"
     });
 

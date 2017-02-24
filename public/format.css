@@ -120,7 +120,7 @@ li{
   cursor: pointer;
 }
 
-#export{
+#button{
   background: lightsteelblue;
   border-color: black;
   border-width: 1.5px;

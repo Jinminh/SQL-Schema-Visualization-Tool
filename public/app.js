@@ -21,6 +21,23 @@ function filter() {
     }
 }
 
+ function hideall()
+ {
+   displayedTable = {}
+   displayTable(displayedTable)
+ }
+
+ function showall()
+ {
+   displayedTable = {}
+   for (var key in tables) {
+    if (tables.hasOwnProperty(key)) {
+      displayedTable[key] = tables[key]
+    }
+  } 
+   displayTable(displayedTable)
+ }
+
  function loadList(tableobj)
  {
      var list = document.getElementById("myTableList")

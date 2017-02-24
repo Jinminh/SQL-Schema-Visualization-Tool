@@ -21,7 +21,9 @@
            <li id="TreeLayout">tree layout</li>
          </ul>
         <br/>
-        <input type="button" onclick="exportLocal('diagram.png')" id="export" value = "Export Diagram to Image"/>
+        <input type="button" onclick="exportLocal('diagram.png')" id="button" value = "Export Diagram to Image"/>
+        <input type="button" onclick="hideall()" id="button" value = "Hide all entities"/>
+        <input type="button" onclick="showall()" id="button" value = "Show all entities"/>
         <br/>
         <input type="text" id="myInput" onkeyup="filter()" placeholder="Search..">
         <nav>

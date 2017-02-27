@@ -21,12 +21,14 @@ function filter() {
     }
 }
 
+//hide all elements
  function hideall()
  {
    displayedTable = {}
    displayTable(displayedTable)
  }
 
+//add all items to ist and show them
  function showall()
  {
    displayedTable = {}
@@ -182,6 +184,12 @@ function filter() {
         }, 0); 
     }
 }
+
+//change selection
+function onSelectionChanged(node) {
+    myDiagram.centerRect(node.actualBounds);
+  }
+
  function setupDiagram() {
     var $ = go.GraphObject.make;
     myDiagram = $(go.Diagram, "myDiagramDiv",
@@ -210,6 +218,7 @@ function filter() {
      myDiagram.nodeTemplate =
       $(go.Node, "Auto",  // the whole node panel
         { selectionAdorned: true,
+          selectionChanged: onSelectionChanged,
           resizable: true,
           layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
           fromSpot: go.Spot.AllSides,

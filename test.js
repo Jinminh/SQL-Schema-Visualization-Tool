@@ -84,7 +84,7 @@ app.get('/get_connections', function(req,res){
 app.post('/save_connection', function(req,res){
   console.log('save_connection: ' + req.body.conn_name);
   //search through database for the same item
-  connection.list(function(err, body){
+  connection.list({include_docs:true},function(err, body){
 
     if(!err){
       //check if name already exists

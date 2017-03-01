@@ -10,9 +10,16 @@ app.use(express.static('public'));
 
 // add a get_data endpoint
 
+//setup database
+var nano = require('nano')('http://localhost:5984');
+//nano.db.destroy('alice', function() { uncomment to reset database
+  nano.db.create('connection')
+  connection = nano.db.use('connection')
+//});
+
 var TABLES = null;
 
-var conn_arr=[];
+//var conn_arr=[];
 
 app.get("/tabledata", function(req, res) {
   console.log('im table>>>'+TABLES);
@@ -55,50 +62,44 @@ function removeDuplicates(arr) {
      return new_arr;
 }
 
-
-function get_connections_from_file(filename){
-  fs.readFile(filename,function(err, data){
-    if(err){
-      console.log("im here!!!!!!!");
-      return console.error(err);
-    }
-    if(isEmpty(data)){
-      console.log('im empty');
-    }else
-      for(var i=0; i<JSON.parse(data).length; i++){
-        conn_arr.push(JSON.parse(data)[i]);  
-      }      
-  });
-}
-      
-
-// on load get connections from local file
-
 app.get('/index.html', function(req, res){
   res.sendFile(__dirname + "/" + "index.html");
 });
 
 
 app.get('/get_connections', function(req,res){
-  //console.log('get_connections: ' + JSON.stringify(req.body));
-  res.end(JSON.stringify(conn_arr));
+  var conn_arr = []
+  //list through database
+  connection.list({include_docs:true},function(err, body){
+    if(!err){
+      body.rows.forEach(function(doc) {
+        conn_arr.push(doc.doc);
+      });
+      res.end(JSON.stringify(conn_arr));
+    }
+  });
 });
 
-
-
+//save connection through nano(couchdb)
 app.post('/save_connection', function(req,res){
   console.log('save_connection: ' + req.body.conn_name);
-  for(var i in conn_arr){
-    if(conn_arr[i].conn_name == req.body.conn_name){
-      console.log('name already exist!!!');
-      return res.end('Connction name already exist!!!\nPlease re-enter a name');
+  //search through database for the same item
+  connection.list(function(err, body){
+
+    if(!err){
+      //check if name already exists
+      body.rows.forEach(function(doc) {
+        if(doc.conn_name == req.body.conn_name)
+        {
+          return res.end('Connction name already exists!!!\nPlease re-enter a name');
+        }
+      });
+      //insert body (null in place of id)
+      connection.insert(req.body, null, function(err, body){
+        return res.end('Could not save connection!!!\nPlease re-enter a name');
+      })
+    res.end('Connction Saved');
     }
-  }
-  
-  conn_arr.push(req.body);
-  fs.writeFile(__dirname+'/connection.json', JSON.stringify(conn_arr), function(err){
-    console.log('im writng file!!!'+conn_arr);
-    return console.error(err);
   });
   res.end('Connction Saved');
 });
@@ -253,7 +254,7 @@ var server = app.listen(8474, function(){
   var host = server.address().address;
   var port = server.address().port;
   console.log("Exa listening at http://%s:%s",host,port);
-  get_connections_from_file(__dirname+'/connection.json');
+  //get_connections_from_file(__dirname+'/connection.json');
 })
 
 

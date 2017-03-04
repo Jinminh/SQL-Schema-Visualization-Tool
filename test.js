@@ -250,7 +250,7 @@ app.get('/proceget',function(req,res){
 
 });
   
-var server = app.listen(8474, function(){
+var server = app.listen(7474, function(){
   var host = server.address().address;
   var port = server.address().port;
   console.log("Exa listening at http://%s:%s",host,port);

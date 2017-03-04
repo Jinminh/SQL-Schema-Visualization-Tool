@@ -1,1 +1,1 @@
-[{"conn_name":"testdb","host":"test.ci9et1hjxavg.us-west-2.rds.amazonaws.com","port":"3306","db":"testdb","user":"root","pwd":"testdbpwd"}]
+[{"conn_name":"testdb","host":"test.ci9et1hjxavg.us-west-2.rds.amazonaws.com","port":"3306","db":"testdb","user":"root","pwd":"testdbpwd"},{"conn_name":"northwind","host":"test.ci9et1hjxavg.us-west-2.rds.amazonaws.com","port":"3306","db":"northwind","user":"root","pwd":"testdbpwd"},{"conn_name":"test2","host":"test.ci9et1hjxavg.us-west-2.rds.amazonaws.com","port":"3306","db":"test2","user":"root","pwd":"testdbpwd"}]

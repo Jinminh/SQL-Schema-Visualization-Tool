@@ -13,7 +13,14 @@
 <body>
     <div id = "outside-frame">
       <div id="myDiagramDiv"> </div>
+      
       <div id="column">
+        
+        <label class="switch">
+          <input id="summarized" type="checkbox" onchange="checkboxClick(this)">
+          <div class="slider"></div>
+        </label>
+
         <ul id="layoutList">
            <li id="CircularLayout">circular layout</li>
            <li id="ForceDirectedLayout">force directed layout</li>
@@ -22,9 +29,9 @@
            <li id="TreeLayout">tree layout</li>
          </ul>
         <br/>
-        <input type="button" onclick="exportLocal('diagram.png')" id="button" value = "Export Diagram to Image"/>
-        <input type="button" onclick="hideall()" id="button" value = "Hide all entities"/>
-        <input type="button" onclick="showall()" id="button" value = "Show all entities"/>
+        <input type="button" onclick="exportLocal('diagram.png')" id="Export" value = "Export Diagram to Image"/>
+        <input type="button" onclick="hideall()" id="hideall" value = "Hide all entities"/>
+        <input type="button" onclick="showall()" id="showall" value = "Show all entities"/>
         <br/>
         <input type="text" id="myInput" onkeyup="filter()" placeholder="Search..">
         <nav>

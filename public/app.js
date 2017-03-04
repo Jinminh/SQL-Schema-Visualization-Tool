@@ -22,6 +22,35 @@ function filter() {
     }
 }
 
+//hide and show elements
+function checkboxClick(checkboxElem)
+{
+  if (checkboxElem.checked) {
+    document.getElementById("myTableList").style.visibility = "hidden"
+    document.getElementById("hideall").style.visibility = "hidden"
+    document.getElementById("showall").style.visibility = "hidden"
+    document.getElementById("myInput").style.visibility = "hidden"
+
+    document.getElementById("hideall").style.display = "none"
+    document.getElementById("showall").style.display = "none"
+    document.getElementById("myInput").style.display = "none"
+
+    switchToSummarized(myDiagram)
+    displaySummarized(ae_summ1, ae_summ2, ar)
+  } else {
+    document.getElementById("myTableList").style.visibility = "visible"
+    document.getElementById("hideall").style.visibility = "visible"
+    document.getElementById("showall").style.visibility = "visible"
+    document.getElementById("myInput").style.visibility = "visible"
+
+    document.getElementById("hideall").style.display = "inline"
+    document.getElementById("showall").style.display = "inline"
+    document.getElementById("myInput").style.display = "inline"
+    switchToER(myDiagram)
+    displayTable(displayedTable)
+  }
+}
+
 //hide all elements
  function hideall()
  {
@@ -41,52 +70,6 @@ function filter() {
    displayTable(displayedTable)
  }
 
- function loadList(tableobj){
-     var list = document.getElementById("myTableList")
-     tables = {};
-     for(var i=0; i<tableobj.length; i++){
-         var Val = tableobj[i]["table"+i]
-         var obj = [];
-         for(var j=0; j<Object.keys(tableobj[i]).length-1; j++)
-         {
-             obj[j] = tableobj[i]['col'+j]
-         }
-         tables[Val] = obj
-         tables[Val].referencedTables = [];
-       
-         //alert("Val: "+Val+" tables[Val]: "+ tables[Val]);
-     }
-        for(var i=0; i<tableobj.length; i++){
-          var Val = tableobj[i]["table"+i];
-          
-          var keys = Object.keys(tables[Val]);
-       //alert("keys:"+keys);
-          for(var j=0; j<Object.keys(tables[Val]).length-1; j++){
-          if(tables[Val][j]['referenced_table_name'] !== null && tables[Val][j]['referenced_table_name'] !== undefined){
-              if($.inArray(tables[Val][j]['referenced_table_name'], tables[Val].referencedTables) == -1)
-                    tables[Val].referencedTables.push(tables[Val][j]['referenced_table_name']);
-              if($.inArray(Val, tables[tables[Val][j]['referenced_table_name']].referencedTables) == -1)
-                    tables[tables[Val][j]['referenced_table_name']].referencedTables.push(Val);
-             }
-         }
-         var newLi = document.createElement('li');
-         newLi.appendChild(document.createTextNode(Val));
-         list.appendChild(newLi);
-         (function(value){
-            newLi.addEventListener("click", function() {
-            if(displayedTable[value] !== undefined)
-            {
-                delete displayedTable[value]
-            }
-            else
-            {
-                displayedTable[value] = tables[value]
-            }
-            displayTable(displayedTable)
-        }, false);})(Val)
-     }
-     
- }
 
  function expandTree(data){
    var reloadTable = false;
@@ -100,12 +83,51 @@ function filter() {
    if(reloadTable)
       displayTable(displayedTable)
  }
+
+ function displaySummarized(square1, square2, diamond)
+ {
+   var nodeDataArray = []
+   var linkDataArray = []
+   
+   if(typeof square1.location == 'undefined')
+   {
+     nodeDataArray.push({"key":square1.name, "items":square1.data, "fig":"RoundedRectangle"})
+   }
+   else
+   {
+     nodeDataArray.push({"key":square1.name, "items":square1.data, "loc":square1.location, "fig":"RoundedRectangle"})
+   }
+
+   if(typeof diamond.location == 'undefined')
+   {
+    nodeDataArray.push({"key":diamond.name, "items":diamond.data, "fig":"Diamond"})
+   }
+   else
+   {
+     nodeDataArray.push({"key":diamond.name, "items":diamond.data, "loc":diamond.location, "fig":"Diamond"})
+   }
+
+   if(typeof square2.location == 'undefined')
+   {
+    nodeDataArray.push({"key":square2.name, "items":square2.data, "fig":"RoundedRectangle"})
+   }
+   else
+   { 
+    nodeDataArray.push({"key":square2.name, "items":square2.data, "loc":square2.location, "fig":"RoundedRectangle"})
+   }
+   
+   
+   linkDataArray.push({"from":square1.name, 'to':diamond.name })
+   linkDataArray.push({"from":square2.name, 'to':diamond.name })
+
+   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+
+ }
  
  function displayTable(dataTable) {
     // create the model for the E-R diagram
     var nodeDataArray = []
     var linkDataArray = []
-    console.log('will our loop run?')
     var keys = Object.keys(dataTable)
     for(var j=0; j < keys.length; j++)
     {
@@ -193,7 +215,7 @@ function onSelectionChanged(node) {
     var lightgrad = $(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
     
     // the template for each attribute in a node's array of item data
-    var itemTempl =
+    itemTempl =
       $(go.Panel, "Horizontal",
         $(go.TextBlock,
           { stroke: "#333333",
@@ -201,49 +223,7 @@ function onSelectionChanged(node) {
           new go.Binding("text", "name"))
       );
     
-     myDiagram.nodeTemplate =
-      $(go.Node, "Auto",  // the whole node panel
-        { selectionAdorned: true,
-          selectionChanged: onSelectionChanged,
-          resizable: true,
-          layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
-          fromSpot: go.Spot.AllSides,
-          toSpot: go.Spot.AllSides,
-          isShadowed: true,
-          shadowColor: "#C5C1AA" },
-        new go.Binding("location", "location").makeTwoWay(),
-        // define the node's outer shape, which will surround the Table
-        $(go.Shape, "Rectangle",
-          { fill: lightgrad, stroke: "#756875", strokeWidth: 3 }),
-        $(go.Panel, "Table",
-          { margin: 8, stretch: go.GraphObject.Fill },
-          $(go.RowColumnDefinition, { row: 0, sizing: go.RowColumnDefinition.None }),
-          // the table header
-          $(go.TextBlock,
-            {
-              row: 0, alignment: go.Spot.Center,
-              margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
-              font: "bold 16px sans-serif"
-            },
-            new go.Binding("text", "key")),
-            { doubleClick: function(e, obj) { expandTree(obj.part.data); } },
-          // the collapse/expand button
-          $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
-            { row: 0, alignment: go.Spot.TopRight }),
-          // the list of Panels, each showing an attribute
-          $(go.Panel, "Vertical",
-            {
-              name: "LIST",
-              row: 1,
-              padding: 3,
-              alignment: go.Spot.TopLeft,
-              defaultAlignment: go.Spot.Left,
-              stretch: go.GraphObject.Horizontal,
-              itemTemplate: itemTempl
-            },
-            new go.Binding("itemArray", "items"))
-        )  // end Table Panel
-      ); 
+    switchToER(myDiagram)
       
       // define the Link template, representing a relationship
     myDiagram.linkTemplate =
@@ -284,6 +264,106 @@ function onSelectionChanged(node) {
           myDiagram.layout = $(go[e.target.id])
         }
       });
+ }
+
+ function switchToSummarized(obj){
+   var $ = go.GraphObject.make;
+   var lightgrad = $(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
+   obj.nodeTemplate =
+      $(go.Node, "Auto",  // the whole node panel
+        { selectionAdorned: true,
+          selectionChanged: onSelectionChanged,
+          resizable: true,
+          layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
+          fromSpot: go.Spot.AllSides,
+          toSpot: go.Spot.AllSides,
+          isShadowed: true,
+          shadowColor: "#C5C1AA" },
+        new go.Binding("location", "location").makeTwoWay(),
+        new go.Binding("location", "loc", go.Point.parse),
+        $(go.Shape,
+        {
+          name: "SHAPE",
+          fill: $(go.Brush, "Linear", { 0.0: "white", 1.0: "gray" }),
+        },
+        new go.Binding("figure", "fig")),
+        // define the node's outer shape, which will surround the Table
+        $(go.Panel, "Table",
+          { margin: 8, stretch: go.GraphObject.Fill },
+          $(go.RowColumnDefinition, { row: 0, sizing: go.RowColumnDefinition.None }),
+          // the table header
+          $(go.TextBlock,
+            {
+              row: 0, alignment: go.Spot.Center,
+              margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
+              font: "bold 16px sans-serif"
+            },
+            new go.Binding("text", "key")),
+             $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
+            { row: 0, alignment: go.Spot.TopRight }),
+          // the list of Panels, each showing an attribute
+          $(go.Panel, "Vertical",
+            {
+              name: "LIST",
+              row: 1,
+              padding: 3,
+              alignment: go.Spot.TopLeft,
+              defaultAlignment: go.Spot.Left,
+              stretch: go.GraphObject.Horizontal,
+              itemTemplate: itemTempl
+            },
+            new go.Binding("itemArray", "items"))
+        )  // end Table Panel
+      );
+ }
+
+ function switchToER(obj){
+   var $ = go.GraphObject.make;
+   var lightgrad = $(go.Brush, "Linear", { 1: "#E6E6FA", 0: "#FFFAF0" });
+    obj.nodeTemplate =
+      $(go.Node, "Auto",  // the whole node panel
+        { selectionAdorned: true,
+          selectionChanged: onSelectionChanged,
+          resizable: true,
+          layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
+          fromSpot: go.Spot.AllSides,
+          toSpot: go.Spot.AllSides,
+          isShadowed: true,
+          shadowColor: "#C5C1AA" },
+        new go.Binding("location", "location").makeTwoWay(),
+        new go.Binding("location", "loc", go.Point.parse),
+        // define the node's outer shape, which will surround the Table
+        $(go.Shape, "Rectangle",
+          { fill: lightgrad, stroke: "#756875", strokeWidth: 3 }),
+        $(go.Panel, "Table",
+          { margin: 8, stretch: go.GraphObject.Fill },
+          $(go.RowColumnDefinition, { row: 0, sizing: go.RowColumnDefinition.None }),
+          // the table header
+          $(go.TextBlock,
+            {
+              row: 0, alignment: go.Spot.Center,
+              margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
+              font: "bold 16px sans-serif"
+            },
+            new go.Binding("text", "key")),
+            { doubleClick: function(e, obj) { expandTree(obj.part.data); } },
+          // the collapse/expand button
+          $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
+            { row: 0, alignment: go.Spot.TopRight }),
+          // the list of Panels, each showing an attribute
+          $(go.Panel, "Vertical",
+            {
+              name: "LIST",
+              row: 1,
+              padding: 3,
+              alignment: go.Spot.TopLeft,
+              defaultAlignment: go.Spot.Left,
+              stretch: go.GraphObject.Horizontal,
+              itemTemplate: itemTempl
+            },
+            new go.Binding("itemArray", "items"))
+        )  // end Table Panel
+      );
  }
  
 

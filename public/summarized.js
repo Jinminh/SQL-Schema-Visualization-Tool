@@ -1,3 +1,50 @@
+ function loadList(tableobj){
+     var list = document.getElementById("myTableList")
+     tables = {};
+     for(var i=0; i<tableobj.length; i++){
+         var Val = tableobj[i]["table"+i]
+         var obj = [];
+         for(var j=0; j<Object.keys(tableobj[i]).length-1; j++)
+         {
+             obj[j] = tableobj[i]['col'+j]
+         }
+         tables[Val] = obj
+         tables[Val].referencedTables = [];
+       
+         //alert("Val: "+Val+" tables[Val]: "+ tables[Val]);
+     }
+        for(var i=0; i<tableobj.length; i++){
+          var Val = tableobj[i]["table"+i];
+          
+          var keys = Object.keys(tables[Val]);
+       //alert("keys:"+keys);
+          for(var j=0; j<Object.keys(tables[Val]).length-1; j++){
+          if(tables[Val][j]['referenced_table_name'] !== null && tables[Val][j]['referenced_table_name'] !== undefined){
+              if($.inArray(tables[Val][j]['referenced_table_name'], tables[Val].referencedTables) == -1)
+                    tables[Val].referencedTables.push(tables[Val][j]['referenced_table_name']);
+              if($.inArray(Val, tables[tables[Val][j]['referenced_table_name']].referencedTables) == -1)
+                    tables[tables[Val][j]['referenced_table_name']].referencedTables.push(Val);
+             }
+         }
+         var newLi = document.createElement('li');
+         newLi.appendChild(document.createTextNode(Val));
+         list.appendChild(newLi);
+         (function(value){
+            newLi.addEventListener("click", function() {
+            if(displayedTable[value] !== undefined)
+            {
+                delete displayedTable[value]
+            }
+            else
+            {
+                displayedTable[value] = tables[value]
+            }
+            displayTable(displayedTable)
+        }, false);})(Val)
+     }
+     
+ }
+
 function OrderAscPk(){
   var unordered_li = [];
   var ordered_li = [];
@@ -273,9 +320,41 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
             var ae_1 = general_li[0];
             var ae_2 = general_li[1];
             var ar_1 = general_li[2];
-            console.log("ae_1: "+ JSON.stringify(ae_1));
-            console.log("ae_2: "+ JSON.stringify(ae_2));
-            console.log("ar_1: "+ JSON.stringify(ar_1));
+
+            // for saving to database
+            ae_summ1 = {}
+            ae_summ2 = {}
+            ar = {}
+            var table1arr = []
+            var table2arr = []
+            var tablediamond = []
+            // get data in desired format
+            ae_1.forEach(function(element) {
+                for(var name in element){
+                table1arr.push({"name":name})
+                }
+            }, this);
+
+            ae_summ1.data = table1arr
+            ae_summ1.name = "ae1 temp name"
+
+            ae_2.forEach(function(element) {
+                for(var name in element){
+                table2arr.push({"name":name})
+                }
+            }, this);
+
+            ae_summ2.data = table2arr
+            ae_summ2.name = "ae2 temp name"
+
+            ar_1.forEach(function(element) {
+                for(var name in element){
+                tablediamond.push({"name":name})
+                }
+            }, this);
+
+            ar.data = tablediamond
+            ar.name = "ar temp name"
         }
     }
     requestTables.open('GET', '/tabledata', true)

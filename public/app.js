@@ -70,7 +70,7 @@ function toggleSavedLayout(){
 		}
 		$("#myLayoutList a").click(function(){
 				for(var item in data){
-					if(this.id == data[item].name){
+					if(this.id == data[item].name){					
 						myDiagram.model = new go.GraphLinksModel(data[item].layout[0], data[item].layout[1]);
 					}			
 				}

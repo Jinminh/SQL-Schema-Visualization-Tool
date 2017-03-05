@@ -9,36 +9,40 @@
      <script src="app.js"></script>
      <script src="summarized.js"></script>
   <link rel="stylesheet" type="text/css" href="format.css">
+  <link rel="stylesheet" type="text/css" href="navbar.css">
 </head>
 <body>
     <div id = "outside-frame">
-      <div id="myDiagramDiv"> </div>
-      
-      <div id="column">
-        
-        <label class="switch">
-          <input id="summarized" type="checkbox" onchange="checkboxClick(this)">
-          <div class="slider"></div>
-        </label>
-
-        <ul id="layoutList">
-           <li id="CircularLayout">circular layout</li>
-           <li id="ForceDirectedLayout">force directed layout</li>
-           <li id="GridLayout">grid layout</li>
-           <li id="LayeredDigraphLayout">layered digraph layout</li>
-           <li id="TreeLayout">tree layout</li>
-         </ul>
-        <br/>
-        <input type="button" onclick="exportLocal('diagram.png')" id="Export" value = "Export Diagram to Image"/>
-        <input type="button" onclick="saveLayout()" id="SaveLayouts" value = "Save Layout"/>
-        <input type="button" onclick="hideall()" id="hideall" value = "Hide all entities"/>
-        <input type="button" onclick="showall()" id="showall" value = "Show all entities"/>
-        <br/>
-        <input type="text" id="myInput" onkeyup="filter()" placeholder="Search..">
-        <nav>
-        <ul id="myTableList"/>
-        </nav>
-      </div>
+        <ul id="navbar">
+          <li>
+            <label class="switch">
+              <input id="summarized" type="checkbox" onchange="checkboxClick(this)">
+              <div class="slider"></div>
+            </label>
+          </li>
+          <li class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn" onclick="toggleTables()">Tables</a>
+            <div class="nav-content" id="TableList">
+              <input type="text" placeholder="Search.." id="myInput" onkeyup="filter()">
+              <div id="myTableList"></div>
+            </div>
+          </li>
+          <li class="dropdown">
+          <a href="javascript:void(0)" class="dropbtn" onclick="toggleLayout()">Automatic Layouts</a>
+          <div class="nav-content" id="layoutList">
+            <a href="#" id="CircularLayout">circular layout</a>
+            <a href="#" id="ForceDirectedLayout">force directed layout</a>
+            <a href="#" id="GridLayout">grid layout</a>
+            <a href="#" id="LayeredDigraphLayout">layered digraph layout</a>
+            <a href="#" id="TreeLayout">tree layout</a>
+          </div>
+        </li>
+          <li><a href="javascript:void(0)" onclick="exportLocal('diagram.png')">Export Diagram to Image</a></li>
+          <li><a href="javascript:void(0)" onclick="saveLayout()">Save layout</a></li>
+          <li><a href="javascript:void(0)" id="hideall"  onclick="hideall()">Hide all entities</a></li>
+          <li><a href="javascript:void(0)" id="showall" onclick="showall()">Show all entities</a></li>
+        </ul>
+         <div id="myDiagramDiv"> </div>
     </div>
 </body>
 </html>

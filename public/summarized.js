@@ -26,7 +26,7 @@
                     tables[tables[Val][j]['referenced_table_name']].referencedTables.push(Val);
              }
          }
-         var newLi = document.createElement('li');
+         var newLi = document.createElement('a');
          newLi.appendChild(document.createTextNode(Val));
          list.appendChild(newLi);
          (function(value){
@@ -360,3 +360,4 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
     requestTables.open('GET', '/tabledata', true)
     requestTables.send(null)
  }
+

@@ -9,7 +9,7 @@ function filter() {
     input = $('#myInput')
     filter = input[0].value.toUpperCase()
     ul = $("#myTableList")
-    li = ul[0].getElementsByTagName('li');
+    li = ul[0].getElementsByTagName('a');
 
     // Loop through all list items, and hide those who don't match the search query
     for (i = 0; i < li.length; i++) {
@@ -23,7 +23,7 @@ function filter() {
 }
 
 //hide and show elements
-function checkboxClick(checkboxElem)
+function checkboxClick(checkboxElem, fromlayout)
 {
   if (checkboxElem.checked) {
     document.getElementById("myTableList").style.visibility = "hidden"
@@ -31,24 +31,34 @@ function checkboxClick(checkboxElem)
     document.getElementById("showall").style.visibility = "hidden"
     document.getElementById("myInput").style.visibility = "hidden"
 
-    document.getElementById("hideall").style.display = "none"
-    document.getElementById("showall").style.display = "none"
     document.getElementById("myInput").style.display = "none"
 
     switchToSummarized(myDiagram)
-    displaySummarized(ae_summ1, ae_summ2, ar)
+    if (fromlayout != true){
+      displaySummarized(ae_summ1, ae_summ2, ar)
+    }
   } else {
     document.getElementById("myTableList").style.visibility = "visible"
     document.getElementById("hideall").style.visibility = "visible"
     document.getElementById("showall").style.visibility = "visible"
     document.getElementById("myInput").style.visibility = "visible"
 
-    document.getElementById("hideall").style.display = "inline"
-    document.getElementById("showall").style.display = "inline"
     document.getElementById("myInput").style.display = "inline"
     switchToER(myDiagram)
-    displayTable(displayedTable)
+    if (fromlayout != true){
+      displayTable(displayedTable)
+    }
   }
+}
+//handle dropdown
+function toggleTables()
+{
+  document.getElementById("TableList").classList.toggle("show");
+}
+
+function toggleLayout()
+{
+  document.getElementById("layoutList").classList.toggle("show");
 }
 
 //hide all elements
@@ -289,7 +299,7 @@ function onSelectionChanged(node) {
           new go.Binding("text", "toText"))
       );
       document.getElementById("layoutList").addEventListener("click", function(e){
-        if(e.target && e.target.nodeName == "LI"){
+        if(e.target && e.target.nodeName == "A"){
           myDiagram.layout = $(go[e.target.id])
         }
       });

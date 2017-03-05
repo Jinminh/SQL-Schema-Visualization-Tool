@@ -13,9 +13,57 @@ app.use(express.static('public'));
 //setup database
 var nano = require('nano')('http://localhost:5984');
 //nano.db.destroy('alice', function() { uncomment to reset database
-  nano.db.create('connection')
-  connection = nano.db.use('connection')
+nano.db.create('connection');
+connection = nano.db.use('connection');
 //});
+
+
+/*fectch layout data from couch db and send it to the front end*/
+app.get('/get_layout', function(req,res){
+  console.log('im here;');
+  var i = 0;
+  var j = 0;
+  var list = [];
+  var alice = nano.use('connection');
+  alice.list(function(err, body){
+    if(!err){
+      body.rows.forEach(function(doc){
+        console.log('im docs>>>>i '+i++);
+//         alice.destroy(doc.id, doc.value.rev);
+        alice.get(doc.id,function(err, body){
+          if(!err){
+            console.log('im docs>>>>j '+ j++);
+            console.log("\nim maybe data>>> "+ body.name+": "+JSON.stringify(body.layout));
+            list.push({'name':body.name, 'layout': body.layout});
+            if(i == j){
+              res.send(list);
+            }
+          }else{
+            console.log('i have error');
+          }
+        });
+      });
+    }
+  });
+  //console.log('im hererererererererererr');
+  //console.log('/n/nlist>>>> '+list);
+  
+});
+
+/*Fetch layout data front front end and send it to couchdb*/
+app.post('/save_layout', function(req,res){
+//   console.log('\ni am saveLayout-----------'+req.body.name+'\n');
+  var alice = nano.use('connection');
+  alice.insert(req.body, req.body.name, function(err, body, header){
+    if(err){
+      console.log('im err: '+ err.message);
+      return;
+    }
+    console.log('you have inserted the rabbit.');
+    console.log(body);
+  });
+});
+
 
 var TABLES = null;
 

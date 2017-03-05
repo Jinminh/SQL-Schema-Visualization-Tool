@@ -1,6 +1,8 @@
 
 var tables = [];
-var displayedTable = {}
+var displayedTable = {};
+var nodeDataArray = [];
+var linkDataArray = [];
 
 
 function filter() {
@@ -61,6 +63,27 @@ function toggleLayout()
   document.getElementById("layoutList").classList.toggle("show");
 }
 
+/*Get layout data from backend and store in Saved layout button*/
+function toggleSavedLayout(){
+	$.get('/get_layout', function(data,status){
+// 		alert("Data: "+JSON.stringify(data) +'\nStatus: '+status);
+		$("#myLayoutList").html('<a id="'+data[0].name + '">'+data[0].name+'</a>');
+		for(var i=1; i<data.length; i++){
+			$("#myLayoutList").append('<a id="'+data[i].name + '">'+data[i].name+'</a>');
+		}
+		$("#myLayoutList a").click(function(){
+				for(var item in data){
+					if(this.id == data[item].name){
+						myDiagram.model = new go.GraphLinksModel(data[item].layout[0], data[item].layout[1]);
+					}			
+				}
+			});		
+	
+	});
+	
+	document.getElementById("Layout_List").classList.toggle("show");
+}
+
 //hide all elements
  function hideall()
  {
@@ -96,8 +119,8 @@ function toggleLayout()
 
  function displaySummarized(square1, square2, diamond)
  {
-   var nodeDataArray = []
-   var linkDataArray = []
+  	nodeDataArray = []; 
+   	linkDataArray = [];
    
    if(typeof square1.location == 'undefined')
    {
@@ -136,32 +159,37 @@ function toggleLayout()
 
 //save layout of myDiagram
  function saveLayout() {
-   var layout = myDiagram.nodeDataArray
-   var summarized = document.getElementById("summarized").checked
+   var node_array = nodeDataArray;
+	 var link_array = linkDataArray;
+	 var layout = [];
+	 layout.push(nodeDataArray);
+	 layout.push(linkDataArray);
    var save = prompt("Please enter a layout name"); 
-      if (save != null) {		
-          var data = {
-            'name':save,
-            "layout":layout,
-            "state":summarized
-          };  
-					$.ajax({
-              type: 'POST',
-              data: JSON.stringify(data),
-              contentType: 'application/json',
-              url: '/save_layout',
-							success:function(text){
-								alert(text);
-							}
-          });
-      }
+		if (save != null) {		
+				var data = {
+					'name':save,
+					"layout":layout,
+					"state":summarized
+				};
+			
+			/*send layout data to back end*/
+			$.ajax({
+					type: 'POST',
+					data: JSON.stringify(data),
+					contentType: 'application/json',
+					url: '/save_layout',
+					success:function(text){
+						//alert(text);
+					}
+			});
+		}
  }
  
  function displayTable(dataTable) {
     // create the model for the E-R diagram
-    var nodeDataArray = []
-    var linkDataArray = []
-    var keys = Object.keys(dataTable)
+    nodeDataArray = [];
+    linkDataArray = [];
+    var keys = Object.keys(dataTable);
     for(var j=0; j < keys.length; j++)
     {
       var columns = []
@@ -262,7 +290,7 @@ function onSelectionChanged(node) {
           new go.Binding("text", "name"))
       );
     
-    switchToER(myDiagram)
+    switchToER(myDiagram);
       
       // define the Link template, representing a relationship
     myDiagram.linkTemplate =

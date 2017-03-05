@@ -1,5 +1,5 @@
  function loadList(tableobj){
-     var list = document.getElementById("myTableList")
+     var list = document.getElementById("myTableList");
      tables = {};
      for(var i=0; i<tableobj.length; i++){
          var Val = tableobj[i]["table"+i]
@@ -29,15 +29,19 @@
          var newLi = document.createElement('a');
          newLi.appendChild(document.createTextNode(Val));
          list.appendChild(newLi);
+          
+//          alert(list);
          (function(value){
             newLi.addEventListener("click", function() {
+              
             if(displayedTable[value] !== undefined)
             {
-                delete displayedTable[value]
+                delete displayedTable[value];
             }
             else
             {
-                displayedTable[value] = tables[value]
+                displayedTable[value] = tables[value];
+                //alert("im tables value>>>"+ JSON.stringify(tables[value]));
             }
             displayTable(displayedTable)
         }, false);})(Val)
@@ -52,8 +56,6 @@ function OrderAscPk(){
   /*add entities and their primary keys into unordered_li*/
   for(var key in tables){
     if(tables.hasOwnProperty(key)){
-      //alert(key + " ->>>>>>>>>>>>>>>>>>>>>>>>>>>> " + JSON.stringify(tables[key]));
-      //tables[key].push({"Primary_key_count":0});
       var count = 0;
       
       /*create an object contains {entity_name:list_of_primary_keys[]}*/
@@ -66,7 +68,6 @@ function OrderAscPk(){
       for(var item in tables[key]){
         if(typeof(tables[key][item].constrain_name) != 'undefined'){
           if(tables[key][item].constrain_name=='PRIMARY'){
-            //alert(key+">>>>>>>>>>>"+tables[key][item].name+">>>>>>>>>>>>"+tables[key][item].constrain_name);
             var temp = tables[key][item].name;
             //console.log(temp);
             primary_key_list.push(temp);
@@ -88,7 +89,6 @@ function OrderAscPk(){
   for(var item=0; item< unordered_li.length; item++){
     /*push item from unordered_li */
     ordered_li.push(unordered_li[item]);
-    //console.log("im in for>>>"+ordered_li[0]);
     
     /*compare primary key alphbetically and swap*/
     for(var i=ordered_li.length-1; i>0;i--){
@@ -115,9 +115,6 @@ function OrderAscPk(){
             ordered_li[i] = temp;
             break;
           }else{
-            //console.log("im j>>>"+j);
-           // console.log('im in else!!!'+ordered_li[i][Object.keys(ordered_li[i])][j] +"   "+ ordered_li[i-1][Object.keys(ordered_li[i-1])][j]);
-            //console.log("im ordered_li[i]"+JSON.stringify(ordered_li[i-1])+"  "+JSON.stringify(ordered_li[i]));
             j++;
             continue;
           }
@@ -129,7 +126,6 @@ function OrderAscPk(){
       }
     }
   }
-  //console.log("im ordered>>>>>"+JSON.stringify(ordered_li));
   return [ordered_li,unordered_li];
 }
 
@@ -152,8 +148,6 @@ function check_identical_array(arr1, arr2){
 
 function remove_from_list(item, list){
   for(var i=0; i<list.length;i++){
-    //console.log()
-   // console.log("remaining_rels.keys>>>"+Object.keys(remaining_rels[i]));
     if(JSON.stringify(Object.keys(item)) == JSON.stringify(Object.keys(list[i]))){
       list.splice(i,1);
       break;
@@ -175,68 +169,50 @@ function arr_intersection(arr1, arr2){
   return false;
 }
 
+
+/*Implement the algorithm*/
 function cluster_func(ordered_rels, remaining_rels, cluster,nes){
   /*step 1 and 2*/
   var disjoint = false;
   cluster[0] = ordered_rels[0];
   remove_from_list(cluster[0], remaining_rels);
-  
-  //console.log("im ordered_rels ?????? _______>>>"+ JSON.stringify(cluster[0]));
-  //console.log("im remaining_rels>>>"+JSON.stringify(remaining_rels));
-  //console.log("pk>>>>>>"+pk(ordered_rels[1]).length);
   for(var i=1; i<ordered_rels.length; i++){
-    //console.log("im i>>>>>>"+i+"  "+JSON.stringify(ordered_rels[i]));
     var r = ordered_rels[i]; 
-    //console.log("im nes>>>>"+nes+"im cluster>>>"+cluster[nes-1]);
     if(check_identical_array(pk(r),pk(cluster[nes-1]))){
       cluster[nes] = r;
       nes++;
-      //console.log("im in the first if>>>>r is "+JSON.stringify(r)+ "ordered_rels is "+ JSON.stringify(cluster[nes-1]));
       remove_from_list(r,remaining_rels);
     }else{
       disjoint = true;
       for(var j=0; j<nes; j++){
         if(arr_intersection(pk(r), pk(cluster[j]))){
-          //console.log("im disjoin>>>>"+JSON.stringify(r)+"im clustereed:"+JSON.stringify(cluster[j]));
           disjoint = false;
           break;
         }
       }
       if(disjoint === true){
-        //console.log("im nes>>>"+ nes);
-        //console.log("im c0>>>>>>111>>>"+ JSON.stringify(cluster[0]));
         cluster[nes]=r;
-        nes++;
-        
-        //console.log("im in the second if>>>>r is "+ JSON.stringify(r)+ "ordered_rels is "+ JSON.stringify(ordered_rels[i-1]));
+        nes++;        
         remove_from_list(r, remaining_rels);
        // console.log("im c0>>>>>>222>>>"+ JSON.stringify(cluster[0]));
       }
     }
     
   }
-//   console.log("im in remaining_rels>>>>item?>>>>"+JSON.stringify(remaining_rels));
-  //console.log("im clustred>>>>"+JSON.stringify(cluster));
   
   /*step 3*/
   var key_list = [];
   var remove_list = [];
   
   for(var i=0; i<cluster.length;i++){
-   // console.log(cluster[i][Object.keys(cluster[i])][0]);
     if(!key_list.includes(cluster[i][Object.keys(cluster[i])][0])){
       key_list.push(cluster[i][Object.keys(cluster[i])][0]);
     }
-  }
-  
+  }  
   
   for(var i=0; i< remaining_rels.length; i++){
-    //console.log("im in remaining_rels>>>>item?>>>>"+item);
     var li_push = 0;
     var j = 0;
-    //console.log("im remain>>>"+ JSON.stringify(remaining_rels[i])+"  i>>>"+i);
-    
-    
     for(;;){
       var stop_loop = false;
       for(var k=0; k<key_list.length; k++){
@@ -256,7 +232,6 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
         break;
     }
     
-    
     if(li_push == 1){
       for(var cnt = 0;cnt < cluster.length; cnt++){
         if(cluster[cnt][Object.keys(cluster[cnt])][0] == remaining_rels[i][Object.keys(remaining_rels[i])][0]){
@@ -271,11 +246,7 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
   for(var i=0; i<remove_list.length; i++){
     remove_from_list(remove_list[i], remaining_rels);
   }
-  
-  
-  //console.log("after 3");
-  //console.log("im in remaining_rels>>>>item?>>>>"+JSON.stringify(remaining_rels));
-  //console.log("im clustred>>>>"+JSON.stringify(cluster));
+
   
   /*step 4*/
   var ae_1 = [];
@@ -287,8 +258,6 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
       ae_2.push(cluster[i]);
   }
   
-//   console.log("ae1>>>>"+JSON.stringify(ae_1));
-//   console.log("ae2>>>>"+JSON.stringify(ae_2));
   
   var general_li=[];
   general_li.push(ae_1);

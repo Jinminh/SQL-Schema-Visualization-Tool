@@ -20,6 +20,8 @@
               <div class="slider"></div>
             </label>
           </li>
+          
+          
           <li class="dropdown">
             <a href="javascript:void(0)" class="dropbtn" onclick="toggleTables()">Tables</a>
             <div class="nav-content" id="TableList">
@@ -27,6 +29,8 @@
               <div id="myTableList"></div>
             </div>
           </li>
+          
+          
           <li class="dropdown">
           <a href="javascript:void(0)" class="dropbtn" onclick="toggleLayout()">Automatic Layouts</a>
           <div class="nav-content" id="layoutList">
@@ -37,10 +41,22 @@
             <a href="#" id="TreeLayout">tree layout</a>
           </div>
         </li>
+          
           <li><a href="javascript:void(0)" onclick="exportLocal('diagram.png')">Export Diagram to Image</a></li>
           <li><a href="javascript:void(0)" onclick="saveLayout()">Save layout</a></li>
           <li><a href="javascript:void(0)" id="hideall"  onclick="hideall()">Hide all entities</a></li>
           <li><a href="javascript:void(0)" id="showall" onclick="showall()">Show all entities</a></li>
+          
+           <li class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn" onclick="toggleSavedLayout()">Saved Layouts</a>
+            <div class="nav-content" id="Layout_List">
+<!--               <input type="text" placeholder="Search.." id="myInput" onkeyup="filter()"> -->
+              <div id="myLayoutList">
+<!--                 <a href="#" id="TreeLayout">tree layout</a> -->
+              </div>
+            </div>
+          </li>
+          
         </ul>
          <div id="myDiagramDiv"> </div>
     </div>

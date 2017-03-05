@@ -128,7 +128,6 @@ function checkboxClick(checkboxElem)
  function saveLayout() {
    var layout = myDiagram.nodeDataArray
    var summarized = document.getElementById("summarized").checked
-   }
    var save = prompt("Please enter a layout name"); 
       if (save != null) {		
           var data = {

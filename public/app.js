@@ -1,9 +1,6 @@
 
 var tables = [];
 var displayedTable = {};
-var nodeDataArray = [];
-var linkDataArray = [];
-
 
 function filter() {
     // Declare variables
@@ -119,8 +116,8 @@ function toggleSavedLayout(){
 
  function displaySummarized(square1, square2, diamond)
  {
-  	nodeDataArray = []; 
-   	linkDataArray = [];
+  	var nodeDataArray = []
+     var linkDataArray = []
    
    if(typeof square1.location == 'undefined')
    {
@@ -159,11 +156,10 @@ function toggleSavedLayout(){
 
 //save layout of myDiagram
  function saveLayout() {
-   var node_array = nodeDataArray;
-	 var link_array = linkDataArray;
-	 var layout = [];
-	 layout.push(nodeDataArray);
-	 layout.push(linkDataArray);
+   var layout = []
+   layout.push(myDiagram.model.nodeDataArray)
+   layout.push(myDiagram.model.linkDataArray)
+   var summarized = document.getElementById("summarized").checked
    var save = prompt("Please enter a layout name"); 
 		if (save != null) {		
 				var data = {
@@ -187,8 +183,8 @@ function toggleSavedLayout(){
  
  function displayTable(dataTable) {
     // create the model for the E-R diagram
-    nodeDataArray = [];
-    linkDataArray = [];
+    var nodeDataArray = [];
+    var linkDataArray = [];
     var keys = Object.keys(dataTable);
     for(var j=0; j < keys.length; j++)
     {

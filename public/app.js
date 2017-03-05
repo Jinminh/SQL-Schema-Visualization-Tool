@@ -353,8 +353,28 @@ function onSelectionChanged(node) {
             },
             new go.Binding("visible", "show").makeTwoWay(),
             new go.Binding("itemArray", "items"))
-        )  // end Table Panel
+        ),  // end Table Panel
+        {
+        contextMenu:     // define a context menu for each node
+          $(go.Adornment, "Vertical",  // that has one button
+            $("ContextMenuButton",
+              $(go.TextBlock, "Drill Into"),
+              { click: function(e, obj) { drillInto(obj.part.data); } })
+            // more ContextMenuButtons would go here
+          )  // end Adornment
+      }
       );
+ }
+
+ function drillInto(data){
+   var check = document.getElementById('summarized')
+    check.checked = !check.checked
+    checkboxClick(check, true)
+    displayedTable = {}
+    data.items.forEach(function(element) {
+      displayedTable[element.name] = tables[element.name]
+    }, this);
+    displayTable(displayedTable)
  }
 
  function switchToER(obj){

@@ -127,11 +127,14 @@ function checkboxClick(checkboxElem)
 //save layout of myDiagram
  function saveLayout() {
    var layout = myDiagram.nodeDataArray
+   var summarized = document.getElementById("summarized").checked
+   }
    var save = prompt("Please enter a layout name"); 
       if (save != null) {		
           var data = {
             'name':save,
-            "layout":layout
+            "layout":layout,
+            "state":summarized
           };  
 					$.ajax({
               type: 'POST',

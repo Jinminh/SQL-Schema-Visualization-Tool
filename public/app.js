@@ -123,6 +123,27 @@ function checkboxClick(checkboxElem)
    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 
  }
+
+//save layout of myDiagram
+ function saveLayout() {
+   var layout = myDiagram.nodeDataArray
+   var save = prompt("Please enter a layout name"); 
+      if (save != null) {		
+          var data = {
+            'name':save,
+            "layout":layout
+          };  
+					$.ajax({
+              type: 'POST',
+              data: JSON.stringify(data),
+              contentType: 'application/json',
+              url: '/save_layout',
+							success:function(text){
+								alert(text);
+							}
+          });
+      }
+ }
  
  function displayTable(dataTable) {
     // create the model for the E-R diagram
@@ -140,7 +161,13 @@ function checkboxClick(checkboxElem)
               linkDataArray.push({"from":keys[j],'to':dataTable[keys[j]][i]['referenced_table_name']})
           }
       }
-      nodeDataArray.push({"key":keys[j], "items":columns})
+      if(typeof dataTable[keys[j]].location == 'undefined'){
+        nodeDataArray.push({"key":keys[j], "items":columns})
+      }
+      else
+      {
+        nodeDataArray.push({"key":keys[j], "items":columns})
+      }
     }
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
       
@@ -299,7 +326,7 @@ function onSelectionChanged(node) {
               font: "bold 16px sans-serif"
             },
             new go.Binding("text", "key")),
-             $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
+            $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
             { row: 0, alignment: go.Spot.TopRight }),
           // the list of Panels, each showing an attribute
           $(go.Panel, "Vertical",
@@ -312,6 +339,7 @@ function onSelectionChanged(node) {
               stretch: go.GraphObject.Horizontal,
               itemTemplate: itemTempl
             },
+            new go.Binding("visible", "show").makeTwoWay(),
             new go.Binding("itemArray", "items"))
         )  // end Table Panel
       );
@@ -361,6 +389,7 @@ function onSelectionChanged(node) {
               stretch: go.GraphObject.Horizontal,
               itemTemplate: itemTempl
             },
+            new go.Binding("visible", "show").makeTwoWay(),
             new go.Binding("itemArray", "items"))
         )  // end Table Panel
       );

@@ -2,6 +2,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var mysql = require('mysql');
 var fs = require('fs');
+var crypto = require('crypto');
 
 var app = express();
 app.use(bodyParser.json());
@@ -17,6 +18,12 @@ nano.db.create('connection');
 connection = nano.db.use('connection');
 //});
 
+var hash_conn;
+
+function hash(str){
+  var hashv = crypto.createHash('md5').update(str).digest('hex');
+  return hashv;
+}
 
 /*fectch layout data from couch db and send it to the front end*/
 app.get('/get_layout', function(req,res){
@@ -33,8 +40,9 @@ app.get('/get_layout', function(req,res){
         alice.get(doc.id,function(err, body){
           if(!err){
             console.log('im docs>>>>j '+ j++);
-            console.log("\nim maybe data>>> "+ body.name+": "+JSON.stringify(body.layout));
-            list.push({'name':body.name, 'layout': body.layout});
+            console.log("\nim maybe data>>> "+ body.conn_name+": "+JSON.stringify(body.layout));
+            if(body.conn_name == hash_conn)
+              list.push({'name':body.name, 'layout': body.layout});
             if(i == j){
               res.send(list);
             }
@@ -53,13 +61,17 @@ app.get('/get_layout', function(req,res){
 /*Fetch layout data front front end and send it to couchdb*/
 app.post('/save_layout', function(req,res){
 //   console.log('\ni am saveLayout-----------'+req.body.name+'\n');
+  console.log('im hash conn in save: '+ hash_conn);
+  var layout_info = req.body;
+  layout_info['conn_name'] = hash_conn; 
+  //console.log('im req.body>>>>'+JSON.stringify(layout_info));
   var alice = nano.use('connection');
-  alice.insert(req.body, req.body.name, function(err, body, header){
+  alice.insert(layout_info, req.body.name, function(err, body, header){
     if(err){
       console.log('im err: '+ err.message);
       return;
     }
-    console.log('you have inserted the rabbit.');
+    console.log('you have inserted.');
     console.log(body);
   });
 });
@@ -163,7 +175,9 @@ app.get('/proceget',function(req,res){
     un:req.query.user,
     pwd:req.query.pwd
   }
-
+  
+  hash_conn = hash(JSON.stringify(response));
+  console.log('im hash conn'+ hash_conn);
   //create connection parameters
   var conn = mysql.createConnection({
     host:response.hn,

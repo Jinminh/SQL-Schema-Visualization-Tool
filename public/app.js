@@ -25,24 +25,32 @@ function filter() {
 function checkboxClick(checkboxElem, fromlayout)
 {
   if (checkboxElem.checked) {
-    document.getElementById("myTableList").style.visibility = "hidden"
+    if(document.getElementById("TableList").className == "nav-content show"){
+      toggleTables()
+    }
+    document.getElementById("tabletoggle").style.visibility = "hidden"
     document.getElementById("hideall").style.visibility = "hidden"
     document.getElementById("showall").style.visibility = "hidden"
-    document.getElementById("myInput").style.visibility = "hidden"
 
-    document.getElementById("myInput").style.display = "none"
+    document.getElementById("tabletoggle").style.display = "none"
+    document.getElementById("hideall").style.display = "none"
+    document.getElementById("showall").style.display = "none"
+    document.getElementById("tabletoggle").style.display = "none"
 
     switchToSummarized(myDiagram)
     if (fromlayout != true){
       displaySummarized(ae_summ1, ae_summ2, ar)
     }
   } else {
-    document.getElementById("myTableList").style.visibility = "visible"
+    document.getElementById("tabletoggle").style.visibility = "visible"
     document.getElementById("hideall").style.visibility = "visible"
     document.getElementById("showall").style.visibility = "visible"
-    document.getElementById("myInput").style.visibility = "visible"
 
-    document.getElementById("myInput").style.display = "inline"
+    document.getElementById("tabletoggle").style.display = "inline-block"
+    document.getElementById("hideall").style.display = "inline-block"
+    document.getElementById("showall").style.display = "inline-block"
+    document.getElementById("tabletoggle").style.display = "inline-block"
+
     switchToER(myDiagram)
     if (fromlayout != true){
       displayTable(displayedTable)

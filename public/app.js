@@ -70,13 +70,41 @@ function toggleSavedLayout(){
 		}
 		$("#myLayoutList a").click(function(){
 				for(var item in data){
-					if(this.id == data[item].name){					
-						myDiagram.model = new go.GraphLinksModel(data[item].layout[0], data[item].layout[1]);
+					if(this.id == data[item].name){
+            if(data[item].state != document.getElementById("summarized").checked)
+            {
+              //correct for state
+              var check = document.getElementById('summarized')
+              check.checked = !check.checked
+              checkboxClick(check, true)
+            }
+            myDiagram.layout = new go.Layout
+            //set data for state
+            if(data[item].state){
+                convertloc(data[item].layout[0])
+                myDiagram.model = new go.GraphLinksModel(data[item].layout[0], data[item].layout[1]);
+              }
+              else{
+                displayedTable = {}
+                data[item].layout[0].forEach(function(element) {
+                  displayedTable[element.key] = tables[element.key]
+                }, this);
+
+                convertloc(data[item].layout[0])
+                myDiagram.model = new go.GraphLinksModel(data[item].layout[0], data[item].layout[1]);
+              }
 					}			
 				}
 			});		
 	
 	});
+
+  function convertloc(nodearr)
+  {
+    nodearr.forEach(function(node) {
+      node.loc = new go.Point(node.loc.K, node.loc.L)
+    }, this);
+  }
 	
 	document.getElementById("Layout_List").classList.toggle("show");
 }
@@ -119,32 +147,13 @@ function toggleSavedLayout(){
   	var nodeDataArray = []
      var linkDataArray = []
    
-   if(typeof square1.location == 'undefined')
-   {
      nodeDataArray.push({"key":square1.name, "items":square1.data, "fig":"RoundedRectangle"})
-   }
-   else
-   {
-     nodeDataArray.push({"key":square1.name, "items":square1.data, "loc":square1.location, "fig":"RoundedRectangle"})
-   }
-
-   if(typeof diamond.location == 'undefined')
-   {
+  
     nodeDataArray.push({"key":diamond.name, "items":diamond.data, "fig":"Diamond"})
-   }
-   else
-   {
-     nodeDataArray.push({"key":diamond.name, "items":diamond.data, "loc":diamond.location, "fig":"Diamond"})
-   }
-
-   if(typeof square2.location == 'undefined')
-   {
+   
+  
     nodeDataArray.push({"key":square2.name, "items":square2.data, "fig":"RoundedRectangle"})
-   }
-   else
-   { 
-    nodeDataArray.push({"key":square2.name, "items":square2.data, "loc":square2.location, "fig":"RoundedRectangle"})
-   }
+   
    
    
    linkDataArray.push({"from":square1.name, 'to':diamond.name })
@@ -197,13 +206,8 @@ function toggleSavedLayout(){
               linkDataArray.push({"from":keys[j],'to':dataTable[keys[j]][i]['referenced_table_name']})
           }
       }
-      if(typeof dataTable[keys[j]].location == 'undefined'){
+      
         nodeDataArray.push({"key":keys[j], "items":columns})
-      }
-      else
-      {
-        nodeDataArray.push({"key":keys[j], "items":columns})
-      }
     }
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
       
@@ -342,8 +346,7 @@ function onSelectionChanged(node) {
           toSpot: go.Spot.AllSides,
           isShadowed: true,
           shadowColor: "#C5C1AA" },
-        new go.Binding("location", "location").makeTwoWay(),
-        new go.Binding("location", "loc", go.Point.parse),
+          new go.Binding("location", "loc").makeTwoWay(),
         $(go.Shape,
         {
           name: "SHAPE",
@@ -414,8 +417,7 @@ function onSelectionChanged(node) {
           toSpot: go.Spot.AllSides,
           isShadowed: true,
           shadowColor: "#C5C1AA" },
-        new go.Binding("location", "location").makeTwoWay(),
-        new go.Binding("location", "loc", go.Point.parse),
+        new go.Binding("location", "loc").makeTwoWay(),
         // define the node's outer shape, which will surround the Table
         $(go.Shape, "Rectangle",
           { fill: lightgrad, stroke: "#756875", strokeWidth: 3 }),

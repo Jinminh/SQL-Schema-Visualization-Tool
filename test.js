@@ -42,7 +42,7 @@ app.get('/get_layout', function(req,res){
             console.log('im docs>>>>j '+ j++);
             console.log("\nim maybe data>>> "+ body.conn_name+": "+JSON.stringify(body.layout));
             if(body.conn_name == hash_conn)
-              list.push({'name':body.name, 'layout': body.layout});
+              list.push({'name':body.name, 'layout': body.layout, 'state': body.state});
             if(i == j){
               res.send(list);
             }

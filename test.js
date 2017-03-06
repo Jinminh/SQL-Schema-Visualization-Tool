@@ -15,7 +15,9 @@ app.use(express.static('public'));
 var nano = require('nano')('http://localhost:5984');
 //nano.db.destroy('alice', function() { uncomment to reset database
 nano.db.create('connection');
+nano.db.create('layouts');
 connection = nano.db.use('connection');
+layouts = nano.use('layouts');
 //});
 
 var hash_conn;
@@ -29,29 +31,19 @@ function hash(str){
 app.get('/get_layout', function(req,res){
   console.log('im here;');
   var i = 0;
-  var j = 0;
   var list = [];
-  var alice = nano.use('connection');
-  alice.list(function(err, body){
+  layouts.list({include_docs:true},function(err, body){
     if(!err){
       body.rows.forEach(function(doc){
         console.log('im docs>>>>i '+i++);
+        var item = doc.doc
 //         alice.destroy(doc.id, doc.value.rev);
-        alice.get(doc.id,function(err, body){
-          if(!err){
-            console.log('im docs>>>>j '+ j++);
-            console.log("\nim maybe data>>> "+ body.conn_name+": "+JSON.stringify(body.layout));
-            if(body.conn_name == hash_conn)
-              list.push({'name':body.name, 'layout': body.layout, 'state': body.state});
-            if(i == j){
-              res.send(list);
-            }
-          }else{
-            console.log('i have error');
-          }
-        });
+        console.log("\nim maybe data>>> "+ item.conn_name+": "+JSON.stringify(item.layout));
+        if(item.conn_name == hash_conn)
+          list.push({'name':item.name, 'layout': item.layout, 'state': item.state});
       });
     }
+    res.send(list);
   });
   //console.log('im hererererererererererr');
   //console.log('/n/nlist>>>> '+list);
@@ -65,8 +57,7 @@ app.post('/save_layout', function(req,res){
   var layout_info = req.body;
   layout_info['conn_name'] = hash_conn; 
   //console.log('im req.body>>>>'+JSON.stringify(layout_info));
-  var alice = nano.use('connection');
-  alice.insert(layout_info, req.body.name, function(err, body, header){
+  layouts.insert(layout_info, req.body.name, function(err, body, header){
     if(err){
       console.log('im err: '+ err.message);
       return;

@@ -391,16 +391,33 @@ function onSelectionChanged(node) {
         ),  // end Table Panel
         {
         contextMenu:     // define a context menu for each node
-          $(go.Adornment, "Vertical",  // that has one button
-            $("ContextMenuButton",
-              $(go.TextBlock, "Drill Into"),
-              { click: function(e, obj) { drillInto(obj.part.data); } })
+          $(go.Adornment, "Spot",  // that has several buttons
+            $(go.Placeholder, { padding: 5 }),
+            $("ContextMenuButton", $(go.TextBlock, "Drill Into"),
+              { alignment: go.Spot.Bottom, alignmentFocus: go.Spot.Top, click: function(e, obj) { drillInto(obj.part.data); } }),
+            $("ContextMenuButton", $(go.TextBlock, "Rename"),
+              { alignment: go.Spot.Top, alignmentFocus: go.Spot.Bottom, click: renameNode })
             // more ContextMenuButtons would go here
           )  // end Adornment
       }
       );
  }
 
+//rename node element
+function renameNode(e, obj){
+  var name = prompt("Please enter a new name"); 
+		if (name != null) {
+      myDiagram.startTransaction("changed name")
+      var contextmenu = obj.part
+      var nodedata = contextmenu.data
+
+      //modyfy and commit
+      myDiagram.model.setDataProperty(nodedata, "key", name)
+      myDiagram.commitTransaction("changed name")
+    }	
+}
+
+//drill into node
  function drillInto(data){
    var check = document.getElementById('summarized')
     check.checked = !check.checked

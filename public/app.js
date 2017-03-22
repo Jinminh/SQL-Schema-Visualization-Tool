@@ -190,6 +190,22 @@ function toggleSavedLayout(){
 
  }
 
+ function hideAttributes(){
+   myDiagram.model.nodeDataArray.forEach(function(node){
+       node.show = false;
+   }, this)
+   // force refresh
+   myDiagram.model = new go.GraphLinksModel(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray);
+ }
+
+ function showAttributes(){
+   myDiagram.model.nodeDataArray.forEach(function(node){
+       node.show = true;
+   }, this)
+   // force refresh
+   myDiagram.model = new go.GraphLinksModel(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray);
+ }
+
 //save layout of myDiagram
  function saveLayout() {
    var layout = []

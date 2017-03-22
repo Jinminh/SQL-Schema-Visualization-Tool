@@ -2,6 +2,25 @@
 var tables = [];
 var displayedTable = {};
 
+//document.getElementById('uploadJava').addEventListener(uploadJava, false)
+
+function uploadJava(evt){
+  var first = evt.target.files[0];
+  if(first){
+    var res = new FileReader()
+    res.onload = function(e){
+      // file content
+      var content = e.target.result;
+      // this is the content!!!!
+      if(first.name.substr(first.name.lastIndexOf('.')+1) == "java"){
+        alert("VALID JAVA WOOO");
+      }
+      alert("got file "+ first.name)
+    };
+    res.readAsText(first)
+  }
+}
+
 function filter() {
     // Declare variables
     var input, filter, ul, li, a, i;

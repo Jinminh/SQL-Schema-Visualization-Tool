@@ -98,43 +98,51 @@ function toggleSavedLayout(){
 		$("#myLayoutList a").click(function(){
 				for(var item in data){
 					if(this.id == data[item].name){
-            if(data[item].state != document.getElementById("summarized").checked)
-            {
-              //correct for state
-              var check = document.getElementById('summarized')
-              check.checked = !check.checked
-              checkboxClick(check, true)
-            }
-            myDiagram.layout = new go.Layout
-            //set data for state
-            if(data[item].state){
-                convertloc(data[item].layout[0])
-                myDiagram.model = new go.GraphLinksModel(data[item].layout[0], data[item].layout[1]);
-              }
-              else{
-                displayedTable = {}
-                data[item].layout[0].forEach(function(element) {
-                  displayedTable[element.key] = tables[element.key]
-                }, this);
-
-                convertloc(data[item].layout[0])
-                myDiagram.model = new go.GraphLinksModel(data[item].layout[0], data[item].layout[1]);
-              }
+            loadLayout(data[item])
 					}			
 				}
 			});		
-	
+
 	});
+
+  
+	
+	document.getElementById("Layout_List").classList.toggle("show");
+}
+
+function loadLayout(data){
+    if(data.state != document.getElementById("summarized").checked)
+      {
+        //correct for state
+        var check = document.getElementById('summarized')
+        check.checked = !check.checked
+        checkboxClick(check, true)
+      }
+      myDiagram.layout = new go.Layout
+      //set data for state
+      if(data.state){
+        convertloc(data.layout[0])
+        saveAndUpdate(data.layout[0], data.layout[1]);
+      }
+      else{
+        displayedTable = {}
+        data.layout[0].forEach(function(element) {
+          displayedTable[element.key] = tables[element.key]
+        }, this);
+
+        convertloc(data.layout[0])
+        saveAndUpdate(data.layout[0], data.layout[1]);
+      }
+  }
 
   function convertloc(nodearr)
   {
     nodearr.forEach(function(node) {
-      node.loc = new go.Point(node.loc.K, node.loc.L)
+      if(node.loc){
+        node.loc = new go.Point(node.loc.K, node.loc.L)
+      }
     }, this);
   }
-	
-	document.getElementById("Layout_List").classList.toggle("show");
-}
 
 //hide all elements
  function hideall()
@@ -186,16 +194,63 @@ function toggleSavedLayout(){
    linkDataArray.push({"from":square1.name, 'to':diamond.name })
    linkDataArray.push({"from":square2.name, 'to':diamond.name })
 
-   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+   saveAndUpdate(nodeDataArray, linkDataArray);
 
  }
+
+//pushes to cookies
+ function saveAndUpdate(nodeData, linkData){
+   
+   $.get('/get_hash', function(data,status){
+     var hash = data
+     var summarized = document.getElementById("summarized").checked
+     setLayoutCookie(hash, summarized, nodeData, linkData)
+     
+      myDiagram.model = new go.GraphLinksModel(nodeData, linkData)
+   });
+ }
+
+function setLayoutCookie(hash, summ, nodeData, linkData){
+   var layout = []
+     layout.push(nodeData)
+     layout.push(linkData)
+     var data = {
+       'layout':layout,
+       'state':summ
+     }
+
+     setCookie(hash, JSON.stringify(data), 7);
+}
+
+function getCookie(cname){
+ var name = cname+"="
+ var decodedCookie = decodeURIComponent(document.cookie)
+ var ca = document.cookie.split(';')
+ for(var i = 0; i < ca.length; i++){
+   var c = ca[i];
+   while(c.charAt(0) == ' '){
+     c = c.substring(1);
+   }
+   if(c.indexOf(name) == 0){
+     return c.substring(name.length, c.length)
+   }
+ }
+ return ""
+}
+
+function setCookie(cname, cval, exday){
+  var d= new Date();
+  d.setTime(d.getTime() + (exday * 24 * 60 * 60 * 1000))
+  var expires = "expires="+d.toUTCString()
+  document.cookie = cname + "=" + cval + ";" + expires + ";path=/"
+}
 
  function hideAttributes(){
    myDiagram.model.nodeDataArray.forEach(function(node){
        node.show = false;
    }, this)
    // force refresh
-   myDiagram.model = new go.GraphLinksModel(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray);
+   saveAndUpdate(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray)
  }
 
  function showAttributes(){
@@ -203,7 +258,7 @@ function toggleSavedLayout(){
        node.show = true;
    }, this)
    // force refresh
-   myDiagram.model = new go.GraphLinksModel(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray);
+   saveAndUpdate(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray);
  }
 
 //save layout of myDiagram
@@ -252,7 +307,7 @@ function toggleSavedLayout(){
       
         nodeDataArray.push({"key":keys[j], "items":columns})
     }
-    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+    saveAndUpdate(nodeDataArray, linkDataArray);
       
 }
 
@@ -449,6 +504,13 @@ function renameNode(e, obj){
       //modyfy and commit
       myDiagram.model.setDataProperty(nodedata, "key", name)
       myDiagram.commitTransaction("changed name")
+
+       $.get('/get_hash', function(data,status){
+          var hash = data
+          var summarized = document.getElementById("summarized").checked
+          setLayoutCookie(hash, summarized, myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray)
+     
+      });
     }	
 }
 

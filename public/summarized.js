@@ -328,5 +328,14 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
     }
     requestTables.open('GET', '/tabledata', true)
     requestTables.send(null)
+
+     $.get('/get_hash', function(data,status){
+     var hash = data
+     var info = getCookie(hash);
+     if(info !== ""){
+       info = JSON.parse(info)
+       loadLayout(info)
+     }
+   });
  }
 

@@ -3,6 +3,7 @@ import re
 import sys
 import glob
 import os
+import json
 
 table_name = ''
 global if_table
@@ -72,8 +73,10 @@ if __name__ == "__main__":
         table_list.append(table)
     
         if_table = False
-    
-    for item in table_list:
+        
+    t_list = json.dumps(table_list)    
+    for item in t_list:
         print item    
+    
     sys.stdout.flush()
            

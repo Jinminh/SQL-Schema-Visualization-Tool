@@ -58,7 +58,7 @@ app.post('/analyzer', function(req, res){
      if(error){
          throw error;
      }
-//      fk_info = JSON.parse(stdout)
+//      fk_info = JSON.stringify(stdout)
      console.log(stdout)
   });
   

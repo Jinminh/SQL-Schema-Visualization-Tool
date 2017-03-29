@@ -3,6 +3,8 @@ var bodyParser = require("body-parser");
 var mysql = require('mysql');
 var fs = require('fs');
 var crypto = require('crypto');
+var execFile = require("child_process").execFile;
+var util = require("util");
 
 var app = express();
 app.use(bodyParser.json());
@@ -50,8 +52,36 @@ app.get('/get_layout', function(req,res){
   });
   //console.log('im hererererererererererr');
   //console.log('/n/nlist>>>> '+list);
-  
 });
+
+app.post('/analyzer', function(req, res){
+  var path = req.body.location;
+  console.log('\n' + path);
+  var process = execFile('python', ["fk_extractor.py", path], (error, stdout, stderr) => {
+     if(error){
+         throw error;
+     }
+     fk_info = JSON.parse(stdout)
+     console.log(fk_info)
+  });
+  
+//   process.stdout.on('data', (data) => {
+//     console.log(typeof data)
+//     console.log(`${data}`);
+//    });
+//   fs.readdir(path, function(err,items){
+//     if(err){
+//       console.log('im err: '+ err.message);
+//       res.send('directory not found');  
+//     }else{
+//       console.log(items);
+//       for (var i=0; i<items.length; i++) {
+//         console.log(items[i]);
+//       }
+//     } 
+//   })
+});
+
 
 /*Fetch layout data front front end and send it to couchdb*/
 app.post('/save_layout', function(req,res){
@@ -122,7 +152,7 @@ app.get('/index.html', function(req, res){
 
 
 app.get('/get_connections', function(req,res){
-  var conn_arr = []
+  var conn_arr = [];
   //list through database
   connection.list({include_docs:true},function(err, body){
     if(!err){

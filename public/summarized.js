@@ -85,6 +85,7 @@ function OrderAscPk(){
     }
   } 
   
+  console.log("original list>>>>" + JSON.stringify(unordered_li));  
   /*push item into ordered_li and sort items*/ 
   for(var item=0; item< unordered_li.length; item++){
     /*push item from unordered_li */
@@ -126,6 +127,8 @@ function OrderAscPk(){
       }
     }
   }
+   console.log("sorted list>>>>" + JSON.stringify(ordered_li));
+  
   return [ordered_li,unordered_li];
 }
 

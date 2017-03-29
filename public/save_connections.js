@@ -7,14 +7,7 @@ function isEmpty(obj) {
 }
 
 
-$( document ).ready(function() {
-// 	$("#connect").click(function(){
-// 			$.get( "error_handling", function(data){
-// 				alert(data);
-// 			});
-// 	});
-
-	
+$( document ).ready(function() {	
 	$("#dpbtn").click(function(){
 		var ourdata=[];
 		$.get( "get_connections", function(data) {

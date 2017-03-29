@@ -29,6 +29,10 @@ function hash(str){
   return hashv;
 }
 
+app.get('/get_hash', function(req, res){
+  res.send(hash_conn);
+});
+
 /*fectch layout data from couch db and send it to the front end*/
 app.get('/get_layout', function(req,res){
   console.log('im here;');

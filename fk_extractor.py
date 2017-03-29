@@ -74,6 +74,6 @@ if __name__ == "__main__":
         if_table = False
     
     for item in table_list:
-        print item    
+        print(item)   
     sys.stdout.flush()
            

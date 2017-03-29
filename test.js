@@ -29,9 +29,6 @@ function hash(str){
   return hashv;
 }
 
-app.get('/get_hash', function(req, res){
-  res.send(hash_conn);
-});
 /*fectch layout data from couch db and send it to the front end*/
 app.get('/get_layout', function(req,res){
   console.log('im here;');
@@ -61,8 +58,8 @@ app.post('/analyzer', function(req, res){
      if(error){
          throw error;
      }
-     fk_info = JSON.parse(stdout)
-     console.log(fk_info)
+//      fk_info = JSON.parse(stdout)
+     console.log(stdout)
   });
   
 //   process.stdout.on('data', (data) => {

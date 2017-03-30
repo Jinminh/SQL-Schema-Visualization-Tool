@@ -34,7 +34,7 @@ def match_column_name(str):
 #             print col_names[1]
         else:
             key_pair['referenced_column_name'] = col_names[0].strip('\"')
-        fk_list.append(key_pair)
+        fk_list[key_pair['fk_name']] = key_pair
             
 
 
@@ -57,7 +57,7 @@ def match_column_name(str):
 
 if __name__ == "__main__":
     path = sys.argv[1]
-    table_list = []
+    table_list = {}
     for f_name in glob.glob(os.path.join(path, '*.java')):
 #         print filename        
         fo = open(f_name)
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
         column_name_pattern = re.compile('@JoinColumn')    
 
-        fk_list = []
+        fk_list = {}
 
         for line in fo:
             match_table_name(line)
@@ -76,9 +76,9 @@ if __name__ == "__main__":
         if not fk_list:
             continue
         
-        table[table_name] = fk_list     
+#         table[table_name] = fk_list     
 #         table[table_name] = list(set(fk_list))   
-        table_list.append(table)
+        table_list[table_name] = list(fk_list[key] for key in fk_list)
     
         if_table = False
         

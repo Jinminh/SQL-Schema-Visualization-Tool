@@ -61,7 +61,10 @@ app.post('/analyzer', function(req, res){
      if(error){
          throw error;
      }
-     res.send(JSON.stringify(stdout))
+     res.writeHeader(200, {
+         'Content-Type': 'application/json'
+     })
+     res.end(stdout);
   });
 });
 
@@ -141,6 +144,9 @@ app.get('/get_connections', function(req,res){
     if(!err){
       body.rows.forEach(function(doc) {
         conn_arr.push(doc.doc);
+      });
+      res.writeHeader(200, {
+          'Content-Type': 'application/json'
       });
       res.end(JSON.stringify(conn_arr));
     }

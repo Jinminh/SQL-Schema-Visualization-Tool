@@ -84,7 +84,7 @@ function OrderAscPk(){
     }
   } 
   
-//   console.log("original list>>>>" + JSON.stringify(unordered_li));  
+  console.log("original list>>>>" + JSON.stringify(unordered_li));  
   /*push item into ordered_li and sort items*/ 
   for(var item=0; item< unordered_li.length; item++){
     /*push item from unordered_li */
@@ -92,7 +92,6 @@ function OrderAscPk(){
     
     /*compare primary key alphbetically and swap*/
     for(var i=ordered_li.length-1; i>0;i--){
-      //console.log("im in second for");
       var end_loop = 0;  
       var j=0;
       /*There is a list of primary keys which is possible to compare several elements*/
@@ -277,6 +276,7 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
         if (requestTables.readyState == 4){
             
             setupDiagram();
+            console.log(requestTables.responseText);
             loadList(JSON.parse(requestTables.responseText));
             
 //             console.log(requestTables.responseText)

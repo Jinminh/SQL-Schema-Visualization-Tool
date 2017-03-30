@@ -1,5 +1,13 @@
-function handle(){
-    
+function process_table(tables){
+    tableForeignKey = {};
+    for (let tableName in tables) {
+        let tableKeyList = tables[tableName];
+        tableForeignKey[tableName] = [];
+        for (let i in tableKeyList) {
+            tableForeignKey[tableName].push(tableKeyList[i].fk_name);
+        }
+    }
+    return tableForeignKey;
 }
 
 $( document).ready(function() {
@@ -16,9 +24,10 @@ $( document).ready(function() {
           data: JSON.stringify(data),
           contentType: 'application/json',
           url: '/analyzer',
-          success:function(text){
-            t_list = JSON.parse(text);
-            console.log(t_list)
+          success: function(obj){
+            t_list = obj;
+            placeHolder = process_table(t_list);
+            console.log(JSON.stringify(tableForeignKey, null, 2));  
           }
       });
     }else{

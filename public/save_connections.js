@@ -11,7 +11,7 @@ $( document ).ready(function() {
 	$("#dpbtn").click(function(){
 		var ourdata=[];
 		$.get( "get_connections", function(data) {
-			ourdata = JSON.parse(data);
+			ourdata = data//JSON.parse(data);
 			$(".dropdown-content").html('<li id="'+ourdata[0].conn_name + '">'+ourdata[0].conn_name+'</li>');
 			for(var i=1; i<ourdata.length; i++){
 				//console.log('type>>>'+typeof(ourdata[i]));

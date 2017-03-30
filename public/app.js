@@ -1,6 +1,8 @@
 
 var tables = [];
 var displayedTable = {};
+var loadedTables = [];
+var displayedLoadedTables = {};
 
 //document.getElementById('uploadJava').addEventListener(uploadJava, false)
 

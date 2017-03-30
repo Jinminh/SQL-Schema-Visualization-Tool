@@ -55,14 +55,14 @@ $( document ).ready(function() {
             user:$("#user").val(),
             pwd:$("#password").val(),
           };  
-					$.ajax({
-              type: 'POST',
-              data: JSON.stringify(data),
-              contentType: 'application/json',
-              url: '/save_connection',
-							success:function(text){
-								alert(text);
-							}
+		  $.ajax({
+		  	type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            url: '/save_connection',
+			success:function(text){
+				alert(text);
+			}
           });
       }
     }else

@@ -42,18 +42,16 @@ app.get('/get_layout', function(req,res){
   layouts.list({include_docs:true},function(err, body){
     if(!err){
       body.rows.forEach(function(doc){
-        console.log('im docs>>>>i '+i++);
+//         console.log('im docs>>>>i '+i++);
         var item = doc.doc
 //         alice.destroy(doc.id, doc.value.rev);
-        console.log("\nim maybe data>>> "+ item.conn_name+": "+JSON.stringify(item.layout));
+//         console.log("\nim maybe data>>> "+ item.conn_name+": "+JSON.stringify(item.layout));
         if(item.conn_name == hash_conn)
           list.push({'name':item.name, 'layout': item.layout, 'state': item.state});
       });
     }
     res.send(list);
   });
-  //console.log('im hererererererererererr');
-  //console.log('/n/nlist>>>> '+list);
 });
 
 app.post('/analyzer', function(req, res){
@@ -63,25 +61,8 @@ app.post('/analyzer', function(req, res){
      if(error){
          throw error;
      }
-//      fk_info = JSON.stringify(stdout)
-     console.log(stdout)
+     res.send(JSON.stringify(stdout))
   });
-  
-//   process.stdout.on('data', (data) => {
-//     console.log(typeof data)
-//     console.log(`${data}`);
-//    });
-//   fs.readdir(path, function(err,items){
-//     if(err){
-//       console.log('im err: '+ err.message);
-//       res.send('directory not found');  
-//     }else{
-//       console.log(items);
-//       for (var i=0; i<items.length; i++) {
-//         console.log(items[i]);
-//       }
-//     } 
-//   })
 });
 
 
@@ -108,7 +89,7 @@ var TABLES = null;
 //var conn_arr=[];
 
 app.get("/tabledata", function(req, res) {
-  console.log('im table>>>'+TABLES);
+//   console.log('im table>>>'+TABLES);
   res.send(TABLES);
 })
 

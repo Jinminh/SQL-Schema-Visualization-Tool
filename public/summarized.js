@@ -71,7 +71,6 @@ function OrderAscPk(){
             var temp = tables[key][item].name;
             //console.log(temp);
             primary_key_list.push(temp);
-
           }                  
         }
       }
@@ -85,7 +84,7 @@ function OrderAscPk(){
     }
   } 
   
-  console.log("original list>>>>" + JSON.stringify(unordered_li));  
+//   console.log("original list>>>>" + JSON.stringify(unordered_li));  
   /*push item into ordered_li and sort items*/ 
   for(var item=0; item< unordered_li.length; item++){
     /*push item from unordered_li */
@@ -127,7 +126,7 @@ function OrderAscPk(){
       }
     }
   }
-   console.log("sorted list>>>>" + JSON.stringify(ordered_li));
+//    console.log("sorted list>>>>" + JSON.stringify(ordered_li));
   
   return [ordered_li,unordered_li];
 }
@@ -279,6 +278,9 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
             
             setupDiagram();
             loadList(JSON.parse(requestTables.responseText));
+            
+//             console.log(requestTables.responseText)
+            
             var res_li = OrderAscPk();
             var ordered_rels = res_li[0];
             //console.log("im orderedlist>>>>"+JSON.stringify(res_li[0]));

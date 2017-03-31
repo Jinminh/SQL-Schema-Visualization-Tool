@@ -337,8 +337,7 @@ function setCookie(cname, cval, exday){
       for(nm in otherDataTable[keys[x]].referencedTables){
           linkDataArray.push({"from":keys[x],'to':otherDataTable[keys[x]].referencedTables[nm]})
       }
-
-      nodeDataArray.push({"key":keys[x], "items":columns})
+      nodeDataArray.push({"key":keys[x], "items":columns, "color":"blue"})
     }
     saveAndUpdate(nodeDataArray, linkDataArray);
       
@@ -418,7 +417,8 @@ function onSelectionChanged(node) {
         $(go.TextBlock,
           { stroke: "#333333",
             font: "bold 14px sans-serif" },
-          new go.Binding("text", "name"))
+          new go.Binding("text", "name"),
+          new go.Binding("stroke", "color"))
       );
     
     switchToER(myDiagram);
@@ -586,7 +586,8 @@ function renameNode(e, obj){
               margin: new go.Margin(0, 14, 0, 2),  // leave room for Button
               font: "bold 16px sans-serif"
             },
-            new go.Binding("text", "key")),
+            new go.Binding("text", "key"),
+            new go.Binding("stroke", "color")),
             { doubleClick: function(e, obj) { expandTree(obj.part.data); } },
           // the collapse/expand button
           $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles

@@ -74,7 +74,7 @@ function checkboxClick(checkboxElem, fromlayout)
 
     switchToER(myDiagram)
     if (fromlayout != true){
-      displayTable(displayedTable)
+      displayTable(displayedTable, displayedLoadedTables)
     }
   }
 }
@@ -150,7 +150,8 @@ function loadLayout(data){
  function hideall()
  {
    displayedTable = {}
-   displayTable(displayedTable)
+   displayedLoadedTables = {}
+   displayTable(displayedTable, displayedLoadedTables)
  }
 
 //add all items to ist and show them
@@ -161,22 +162,39 @@ function loadLayout(data){
     if (tables.hasOwnProperty(key)) {
       displayedTable[key] = tables[key]
     }
-  } 
-   displayTable(displayedTable)
+  }
+  displayedLoadedTables = {}
+  for(var item in loadedTables){
+    if(loadedTables.hasOwnProperty(item)){
+      displayedLoadedTables[item] = loadedTables[item]
+    }
+  }
+   displayTable(displayedTable, displayedLoadedTables)
  }
 
 
  function expandTree(data){
    var reloadTable = false;
-   displayedTable[data.key].referencedTables.forEach(function(element) {
-     if(displayedTable[element] == undefined)
-     {
-       displayedTable[element] = tables[element]
-       reloadTable = true;
-     }
-   }, this);
+   if(displayedTable[data.key] !== undefined){
+    displayedTable[data.key].referencedTables.forEach(function(element) {
+      if(displayedTable[element] == undefined)
+      {
+        displayedTable[element] = tables[element]
+        reloadTable = true;
+      }
+    }, this);
+   }
+   else if (displayedLoadedTables[data.key] !== undefined){
+      displayedLoadedTables[data.key].referencedTables.forEach(function(element) {
+      if(displayedLoadedTables[element] == undefined)
+      {
+        displayedLoadedTables[element] = loadedTables[element]
+        reloadTable = true;
+      }
+    }, this);
+   }
    if(reloadTable)
-      displayTable(displayedTable)
+      displayTable(displayedTable, displayedLoadedTables)
  }
 
  function displaySummarized(square1, square2, diamond)
@@ -290,7 +308,7 @@ function setCookie(cname, cval, exday){
 		}
  }
  
- function displayTable(dataTable) {
+ function displayTable(dataTable, otherDataTable) {
     // create the model for the E-R diagram
     var nodeDataArray = [];
     var linkDataArray = [];
@@ -308,6 +326,19 @@ function setCookie(cname, cval, exday){
       }
       
         nodeDataArray.push({"key":keys[j], "items":columns})
+    }
+    keys = Object.keys(otherDataTable);
+    for(var x=0; x < keys.length; x++){
+      columns = []
+      var linkTables = []
+      for(var y=0; y < otherDataTable[keys[x]].length; y++){
+        columns.push({"name":otherDataTable[keys[x]][y]['name']})
+      }
+      for(nm in otherDataTable[keys[x]].referencedTables){
+          linkDataArray.push({"from":keys[x],'to':otherDataTable[keys[x]].referencedTables[nm]})
+      }
+
+      nodeDataArray.push({"key":keys[x], "items":columns})
     }
     saveAndUpdate(nodeDataArray, linkDataArray);
       
@@ -525,7 +556,7 @@ function renameNode(e, obj){
     data.items.forEach(function(element) {
       displayedTable[element.name] = tables[element.name]
     }, this);
-    displayTable(displayedTable)
+    displayTable(displayedTable, displayedLoadedTables)
  }
 
  function switchToER(obj){

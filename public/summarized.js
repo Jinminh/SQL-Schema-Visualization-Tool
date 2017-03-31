@@ -43,7 +43,7 @@
                 displayedTable[value] = tables[value];
                 //alert("im tables value>>>"+ JSON.stringify(tables[value]));
             }
-            displayTable(displayedTable)
+            displayTable(displayedTable, displayedLoadedTables)
         }, false);})(Val)
      }
      

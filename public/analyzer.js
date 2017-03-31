@@ -10,7 +10,48 @@ function process_table(tables){
     return tableForeignKey;
 }
 
+function processToTableFormat(table){
+    var tableLoad = {}
+    for(elem in table){
+        tableLoad[elem] = []
+        table[elem].forEach(function(element) {
+            var item = {}
+            item.name = element.fk_name
+            item.referenced_column_name = element.referenced_column_name
+            tableLoad[elem].push(item)
+            tableLoad[elem].referencedTables = []
+        }, this);
+        for(matchtable in table){
+            if(matchtable !== elem)
+            {
+               table[elem].forEach(function(element) {
+                   table[matchtable].forEach(function(match){
+                       if(element.referenced_column_name == match.fk_name && tableLoad[elem].referencedTables.indexOf(matchtable) == -1){
+                            tableLoad[elem].referencedTables.push(matchtable)
+                       }
+                   })
+                }, this); 
+            } 
+        }
+    }
+    return tableLoad
+}
 
+function resetLists(loaded, selected){
+    var loadedTables = [];
+    var displayedLoadedTables = {};
+    var list = document.getElementById("myTableList");
+
+    var items = list.getElementsByTagName("li");
+    for(var i=0; i< items.length;){
+        if(displayedLoadedTables[items[i].value] !== undefined){
+            list.removeChild(items[i])
+        }
+        else{
+            i++;
+        }
+    }
+}
 
 function sort_table(tables){
     var temp_li = [];
@@ -27,6 +68,32 @@ function sort_table(tables){
         }
     }
     return temp_li;
+}
+
+function loadTables(tab){
+    var list = document.getElementById("myTableList");
+    for(elem in tab){
+            var newLi = document.createElement('a');
+            newLi.appendChild(document.createTextNode(elem));
+            list.appendChild(newLi);
+
+            (function(value){
+            newLi.addEventListener("click", function() {
+                
+            if(displayedLoadedTables[value] !== undefined)
+            {
+                delete displayedLoadedTables[value];
+            }
+            else
+            {
+                displayedLoadedTables[value] = loadedTables[value];
+                //alert("im tables value>>>"+ JSON.stringify(tables[value]));
+            }
+            displayTable(displayedTable, displayedLoadedTables)
+        }, false);})(elem)
+    } 
+//          alert(list);
+    
 }
 
 function sort_fk(table_fk_list){
@@ -54,7 +121,15 @@ $( document).ready(function() {
           contentType: 'application/json',
           url: '/analyzer',
           success: function(obj){
+            resetLists(loadedTables, displayedLoadedTables)
+            
+            
             t_list = obj;
+
+            loadedTables = processToTableFormat(t_list)
+
+            loadTables(loadedTables)
+            
               
             console.log("t_list>>>>\n",JSON.stringify(t_list, null, 2));
               

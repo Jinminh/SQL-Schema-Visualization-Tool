@@ -84,7 +84,7 @@ if __name__ == "__main__":
         
     t_list = json.dumps(table_list)  
     
-    print t_list  
+    print(t_list)
     
     sys.stdout.flush()
            

@@ -36,30 +36,10 @@ def match_column_name(str):
             key_pair['referenced_column_name'] = col_names[0].strip('\"')
         fk_list[key_pair['fk_name']] = key_pair
             
-
-
-# def match_ref_table(str):
-    
-#     global bool_match_ref_table
-#     if(not bool_match_ref_table):
-#         return
-#     match = ref_table_name_pattern.search(str)
-#     if match:
-#         ref_table_name = re.findall(r'\s+\S+\s*;', str)[0].strip().strip(';')
-        
-#         if(re.findall('<.+>', ref_table_name)):
-#             ref_table_name = re.findall('<.+>', ref_table_name)[0].strip('>').strip('<')
-            
-#         list_last_index = len(fk_list) - 1
-#         fk_list[list_last_index]['ref_table_name'] = ref_table_name
-#         bool_match_ref_table = False
-
-
 if __name__ == "__main__":
     path = sys.argv[1]
     table_list = {}
     for f_name in glob.glob(os.path.join(path, '*.java')):
-#         print filename        
         fo = open(f_name)
         
         table = {}

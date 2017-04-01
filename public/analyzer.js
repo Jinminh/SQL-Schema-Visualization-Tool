@@ -55,19 +55,27 @@ function resetLists(loaded, selected){
 
 function sort_table(tables){
     var temp_li = [];
+    var remaining_li = [].concat(db_unordered_li);
+    
     for (let item in tables){
         var temp_obj = {};
         temp_obj[item] = tables[item];
-        temp_li.push(temp_obj);
-        for(var i = temp_li.length-1 ; i > 0; i--){
-            if(temp_li[i][Object.keys(temp_li[i])].join() < temp_li[i-1][Object.keys(temp_li[i-1])].join()){
-                var swap_temp = temp_li[i-1];
-                temp_li[i-1] = temp_li[i];
-                temp_li[i] = swap_temp;
-            }
-        }
+//         temp_li.push(temp_obj);
+        remaining_li.push(temp_obj);
     }
-    return temp_li;
+    
+    for (let item in remaining_li){
+        temp_li.push(remaining_li[item]);
+        for(var i = temp_li.length-1 ; i > 0; i--){
+                if(temp_li[i][Object.keys(temp_li[i])].join() < temp_li[i-1][Object.keys(temp_li[i-1])].join()){
+                    var swap_temp = temp_li[i-1];
+                    temp_li[i-1] = temp_li[i];
+                    temp_li[i] = swap_temp;
+                }
+            }
+    }
+    
+    return [temp_li, remaining_li];
 }
 
 function loadTables(tab){
@@ -89,7 +97,7 @@ function loadTables(tab){
                 displayedLoadedTables[value] = loadedTables[value];
                 //alert("im tables value>>>"+ JSON.stringify(tables[value]));
             }
-            displayTable(displayedTable, displayedLoadedTables)
+            displayTable(displayedTable, displayedLoadedTables);
         }, false);})(elem)
     } 
 //          alert(list);
@@ -121,22 +129,31 @@ $( document).ready(function() {
           contentType: 'application/json',
           url: '/analyzer',
           success: function(obj){
-            resetLists(loadedTables, displayedLoadedTables)
-            
-            
+            resetLists(loadedTables, displayedLoadedTables);  
             t_list = obj;
 
-            loadedTables = processToTableFormat(t_list)
+            loadedTables = processToTableFormat(t_list);
 
-            loadTables(loadedTables)
+            loadTables(loadedTables);
+              
+            var unordered_li = process_table(t_list);          
+           
+            var return_li = sort_fk(unordered_li);
+            var ordered_li = return_li[0];
+            var remaining_li = return_li[1];
             
+            var cluster = [];
+            var nes = 1;
               
-            console.log("t_list>>>>\n",JSON.stringify(t_list, null, 2));
+            var general_li = cluster_func(ordered_li, remaining_li, cluster, nes);
+            var ae_1 = general_li[0];
+            var ae_2 = general_li[1];
+            var ar_1 = general_li[2];
               
-            unordered_li = process_table(t_list);
-            ordered_li = sort_fk(unordered_li);
+            console.log("ae_1>>>\n"+JSON.stringify(ae_1));
+            console.log("ae_2>>>\n"+JSON.stringify(ae_2));
+            console.log("ar_1>>>\n"+JSON.stringify(ar_1));
               
-            console.log("\nordered_li>>>>\n",JSON.stringify(ordered_li, null, 2));
           }
       });
     }else{

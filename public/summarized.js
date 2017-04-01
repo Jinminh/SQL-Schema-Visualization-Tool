@@ -49,6 +49,9 @@
      
  }
 
+var db_ordered_li = [];
+var db_unordered_li = [];
+
 function OrderAscPk(){
   var unordered_li = [];
   var ordered_li = [];
@@ -84,7 +87,6 @@ function OrderAscPk(){
     }
   } 
   
-  console.log("original list>>>>" + JSON.stringify(unordered_li));  
   /*push item into ordered_li and sort items*/ 
   for(var item=0; item< unordered_li.length; item++){
     /*push item from unordered_li */
@@ -126,6 +128,14 @@ function OrderAscPk(){
     }
   }
 //    console.log("sorted list>>>>" + JSON.stringify(ordered_li));
+  
+  for(var i = 0; i<unordered_li.length-1; i++){
+      db_unordered_li[i] = unordered_li[i];
+  }
+  
+  for(var j = 0; j<ordered_li.length-1; j++){
+      db_ordered_li[j] = ordered_li[j];
+  }
   
   return [ordered_li,unordered_li];
 }
@@ -267,6 +277,7 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
   return general_li;
 }
 
+
  window.onload = function(){
     // xmlhttprequest - get data from my connection endpoint or something
     // in the response make use of the data we've asked for
@@ -276,19 +287,19 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
         if (requestTables.readyState == 4){
             
             setupDiagram();
-            console.log(requestTables.responseText);
             loadList(JSON.parse(requestTables.responseText));
             
 //             console.log(requestTables.responseText)
             
-            var res_li = OrderAscPk();
+            var res_li = OrderAscPk();                 
             var ordered_rels = res_li[0];
-            //console.log("im orderedlist>>>>"+JSON.stringify(res_li[0]));
-            
             var remaining_rels = res_li[1];
+
             var cluster = [];
             var nes = 1;
             
+//             alert(JSON.stringify(ordered_rels));
+//             alert(JSON.stringify(remaining_rels));
             
             var general_li = cluster_func(ordered_rels, remaining_rels, cluster, nes);
             var ae_1 = general_li[0];

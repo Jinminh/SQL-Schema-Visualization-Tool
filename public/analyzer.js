@@ -146,14 +146,35 @@ $( document).ready(function() {
             var nes = 1;
               
             var general_li = cluster_func(ordered_li, remaining_li, cluster, nes);
-            var ae_1 = general_li[0];
-            var ae_2 = general_li[1];
-            var ar_1 = general_li[2];
-              
-            console.log("ae_1>>>\n"+JSON.stringify(ae_1));
-            console.log("ae_2>>>\n"+JSON.stringify(ae_2));
-            console.log("ar_1>>>\n"+JSON.stringify(ar_1));
-              
+            //get into desired format for display
+            var table1arr = []
+            general_li[0].forEach(function(element) {
+                for(var name in element){
+                table1arr.push({"name":name})
+                }
+            }, this);
+            ae_summ1.data = table1arr;
+
+            //data for ae2
+            var table2arr = []
+            general_li[1].forEach(function(element) {
+                for(var name in element){
+                table2arr.push({"name":name})
+                }
+            }, this);
+            ae_summ2.data = table2arr;
+            
+            //data for ar
+            var table3arr = []
+            general_li[2].forEach(function(element) {
+                for(var name in element){
+                table3arr.push({"name":name})
+                }
+            }, this);
+            ar.data = table3arr;
+            if(document.getElementById('summarized').checked == true){
+                displaySummarized(ae_summ1, ae_summ2, ar)
+            }
           }
       });
     }else{

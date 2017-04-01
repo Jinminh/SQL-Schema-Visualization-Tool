@@ -201,6 +201,25 @@ function loadLayout(data){
  {
   	var nodeDataArray = []
      var linkDataArray = []
+     var keys = Object.keys(tables)
+
+     for(var i = 0; i < square1.data.length; i++){
+       if(keys.indexOf(square1.data[i].name) == -1){
+         square1.data[i].color = "blue"
+       }
+     }
+
+     for(var i = 0; i < square2.data.length; i++){
+       if(keys.indexOf(square2.data[i].name) == -1){
+         square2.data[i].color = "blue"
+       }
+     }
+
+     for(var i = 0; i < diamond.data.length; i++){
+       if(keys.indexOf(diamond.data[i].name) == -1){
+         diamond.data[i].color = "blue"
+       }
+     }
    
      nodeDataArray.push({"key":square1.name, "items":square1.data, "fig":"RoundedRectangle"})
   
@@ -208,7 +227,6 @@ function loadLayout(data){
    
   
     nodeDataArray.push({"key":square2.name, "items":square2.data, "fig":"RoundedRectangle"})
-   
    
    
    linkDataArray.push({"from":square1.name, 'to':diamond.name })
@@ -553,8 +571,14 @@ function renameNode(e, obj){
     check.checked = !check.checked
     checkboxClick(check, true)
     displayedTable = {}
+    displayedLoadedTables = {}
     data.items.forEach(function(element) {
-      displayedTable[element.name] = tables[element.name]
+      if(tables[element.name] !== undefined){
+        displayedTable[element.name] = tables[element.name]
+      }
+      else{
+        displayedLoadedTables[element.name] = loadedTables[element.name]
+      }
     }, this);
     displayTable(displayedTable, displayedLoadedTables)
  }

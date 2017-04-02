@@ -12,8 +12,11 @@ window.onclick = function(event) {
 		}
 		if(!event.target.matches('#layoutbtn')){
 			document.getElementById("layoutList").classList.remove("show");
-
-		}		
+		}	
+		
+		if(!event.target.matches('#saved_layout_btn')){
+			document.getElementById("Layout_List").classList.remove("show");
+		}	
 	}
 }
 

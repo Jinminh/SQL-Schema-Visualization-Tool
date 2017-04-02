@@ -39,28 +39,31 @@ def match_column_name(str):
 if __name__ == "__main__":
     path = sys.argv[1]
     table_list = {}
-    for f_name in glob.glob(os.path.join(path, '*.java')):
-        fo = open(f_name)
-        
-        table = {}
-        table_name_pattern = re.compile(r'@Table(\S+)')
-
-        column_name_pattern = re.compile('@JoinColumn')    
-
-        fk_list = {}
-
-        for line in fo:
-            match_table_name(line)
-            match_column_name(line)  
-            
-        if not fk_list:
-            continue
-        
-#         table[table_name] = fk_list     
-#         table[table_name] = list(set(fk_list))   
-        table_list[table_name] = list(fk_list[key] for key in fk_list)
     
-        if_table = False
+    for root, dirs, files in os.walk(path):
+        for f_name in glob.glob(os.path.join(root, '*.java')):
+            fo = open(f_name)
+
+            table = {}
+            table_name_pattern = re.compile(r'@Table(\S+)')
+
+            column_name_pattern = re.compile('@JoinColumn')    
+
+            fk_list = {}
+
+            for line in fo:
+                match_table_name(line)
+                match_column_name(line)  
+
+            if not fk_list:
+                continue
+
+            table_list[table_name] = list(fk_list[key] for key in fk_list)
+
+            if_table = False
+        
+        
+        
         
     t_list = json.dumps(table_list)  
     

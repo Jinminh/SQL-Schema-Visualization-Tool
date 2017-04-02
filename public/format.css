@@ -84,7 +84,7 @@
 
 #myDiagramDiv{
   width:auto; 
-  height:800px; 
+  height:99%; 
   background-color: #DAE4E4; 
 /*   margin:0 auto; */
   float:top;
@@ -148,6 +148,7 @@ input[type=button]{
 }
 
 #outside-frame{
+  height: 92%;
   background: white;
 }
 

@@ -1,10 +1,21 @@
-
 var tables = [];
 var displayedTable = {};
 var loadedTables = [];
 var displayedLoadedTables = {};
 
 //document.getElementById('uploadJava').addEventListener(uploadJava, false)
+
+window.onclick = function(event) {
+	if(!event.target.matches('.dropdown')){
+		if(!event.target.matches('#myInput') && !event.target.matches('#tabletoggle') ){
+			document.getElementById("TableList").classList.remove("show");
+		}
+		if(!event.target.matches('#layoutbtn')){
+			document.getElementById("layoutList").classList.remove("show");
+
+		}		
+	}
+}
 
 function uploadJava(evt){
   var first = evt.target.files[0];

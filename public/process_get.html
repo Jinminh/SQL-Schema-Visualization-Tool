@@ -1,5 +1,5 @@
 <!DOCTYPE html>  <!-- HTML5 document type -->
-<html>
+<html style="height: 100%;">
 <head>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <!-- use go-debug.js when developing and go.js when deploying -->
@@ -12,7 +12,7 @@
   <link rel="stylesheet" type="text/css" href="format.css">
   <link rel="stylesheet" type="text/css" href="navbar.css">
 </head>
-<body>
+<body style="height: 100%;">
     <div id = "outside-frame">
         <ul id="navbar">
           <li>
@@ -33,15 +33,15 @@
           
           
           <li class="dropdown">
-          <a href="javascript:void(0)" class="dropbtn" onclick="toggleLayout()">Automatic Layouts</a>
-          <div class="nav-content" id="layoutList">
-            <a href="#" id="CircularLayout">circular layout</a>
-            <a href="#" id="ForceDirectedLayout">force directed layout</a>
-            <a href="#" id="GridLayout">grid layout</a>
-            <a href="#" id="LayeredDigraphLayout">layered digraph layout</a>
-            <a href="#" id="TreeLayout">tree layout</a>
-          </div>
-        </li>
+              <a href="javascript:void(0)" class="dropbtn" onclick="toggleLayout()" id = "layoutbtn">Automatic Layouts</a>
+              <div class="nav-content" id="layoutList">
+                <a href="#" id="CircularLayout">circular layout</a>
+                <a href="#" id="ForceDirectedLayout">force directed layout</a>
+                <a href="#" id="GridLayout">grid layout</a>
+                <a href="#" id="LayeredDigraphLayout">layered digraph layout</a>
+                <a href="#" id="TreeLayout">tree layout</a>
+              </div>
+          </li>
           
           <li><a href="javascript:void(0)" onclick="exportLocal('diagram.png')">Export Diagram to Image</a></li>
           <li><a href="javascript:void(0)" onclick="saveLayout()">Save layout</a></li>

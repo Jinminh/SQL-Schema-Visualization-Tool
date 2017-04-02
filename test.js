@@ -88,12 +88,21 @@ app.post('/save_layout', function(req,res){
 
 
 var TABLES = null;
+var ANALYSED = null;
 
 //var conn_arr=[];
 
 app.get("/tabledata", function(req, res) {
 //   console.log('im table>>>'+TABLES);
   res.send(TABLES);
+})
+
+app.get("/analysedata", function(req, res){
+  res.send(ANALYSED);
+})
+
+app.post("/analysedata", function(req, res){
+  ANALYSED = req.body;
 })
 
 function isEmpty(obj) {

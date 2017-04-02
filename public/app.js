@@ -129,7 +129,12 @@ function loadLayout(data){
       else{
         displayedTable = {}
         data.layout[0].forEach(function(element) {
-          displayedTable[element.key] = tables[element.key]
+          if(tables[element.key] !== undefined){
+            displayedTable[element.key] = tables[element.key]
+          }
+          else if(loadedTables !== undefined){
+            displayedLoadedTables[element.key] = loadedTables[element.key]
+          }
         }, this);
 
         convertloc(data.layout[0])
@@ -576,7 +581,7 @@ function renameNode(e, obj){
       if(tables[element.name] !== undefined){
         displayedTable[element.name] = tables[element.name]
       }
-      else{
+      else if(loadedTables !== undefined){
         displayedLoadedTables[element.name] = loadedTables[element.name]
       }
     }, this);

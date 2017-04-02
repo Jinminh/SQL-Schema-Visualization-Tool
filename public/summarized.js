@@ -285,73 +285,96 @@ function cluster_func(ordered_rels, remaining_rels, cluster,nes){
     requestTables.onreadystatechange = function()
     {
         if (requestTables.readyState == 4){
-            
+          ae_summ1 = {}
+          ae_summ2 = {}
+          ar = {}
+
+          $.get('/analysedata', function(data,status){
+            if(data !== ""){
+              loadedTables = JSON.parse(data.loadedTables)
+              if(loadedTables.length == undefined){
+                loadTables(loadedTables);
+              }
+              ae_summ1 = JSON.parse(data.ae1)
+              ae_summ2 = JSON.parse(data.ae2)
+              ar = JSON.parse(data.ar)
+            }
+
             setupDiagram();
             loadList(JSON.parse(requestTables.responseText));
             
 //             console.log(requestTables.responseText)
+
+            if(Object.keys(ae_summ1) == 0 || Object.keys(ae_summ2) == 0 || Object.keys(ar) == 0){
             
-            var res_li = OrderAscPk();                 
-            var ordered_rels = res_li[0];
-            var remaining_rels = res_li[1];
+              var res_li = OrderAscPk();                 
+              var ordered_rels = res_li[0];
+              var remaining_rels = res_li[1];
 
-            var cluster = [];
-            var nes = 1;
-            
-//             alert(JSON.stringify(ordered_rels));
-//             alert(JSON.stringify(remaining_rels));
-            
-            var general_li = cluster_func(ordered_rels, remaining_rels, cluster, nes);
-            var ae_1 = general_li[0];
-            var ae_2 = general_li[1];
-            var ar_1 = general_li[2];
+              var cluster = [];
+              var nes = 1;
+              
+  //             alert(JSON.stringify(ordered_rels));
+  //             alert(JSON.stringify(remaining_rels));
+              
+              
+              var general_li = cluster_func(ordered_rels, remaining_rels, cluster, nes);
+              var ae_1 = general_li[0];
+              var ae_2 = general_li[1];
+              var ar_1 = general_li[2];
 
-            // for saving to database
-            ae_summ1 = {}
-            ae_summ2 = {}
-            ar = {}
-            var table1arr = []
-            var table2arr = []
-            var tablediamond = []
-            // get data in desired format
-            ae_1.forEach(function(element) {
-                for(var name in element){
-                table1arr.push({"name":name})
-                }
-            }, this);
+              // for saving to database
+              
+              var table1arr = []
+              var table2arr = []
+              var tablediamond = []
+              // get data in desired format
+              ae_1.forEach(function(element) {
+                  for(var name in element){
+                  table1arr.push({"name":name})
+                  }
+              }, this);
 
-            ae_summ1.data = table1arr
-            ae_summ1.name = "ae1 temp name"
+              ae_summ1.data = table1arr
+              ae_summ1.name = "ae1 temp name"
 
-            ae_2.forEach(function(element) {
-                for(var name in element){
-                table2arr.push({"name":name})
-                }
-            }, this);
+              ae_2.forEach(function(element) {
+                  for(var name in element){
+                  table2arr.push({"name":name})
+                  }
+              }, this);
 
-            ae_summ2.data = table2arr
-            ae_summ2.name = "ae2 temp name"
+              ae_summ2.data = table2arr
+              ae_summ2.name = "ae2 temp name"
 
-            ar_1.forEach(function(element) {
-                for(var name in element){
-                tablediamond.push({"name":name})
-                }
-            }, this);
+              ar_1.forEach(function(element) {
+                  for(var name in element){
+                  tablediamond.push({"name":name})
+                  }
+              }, this);
 
-            ar.data = tablediamond
-            ar.name = "ar temp name"
+              ar.data = tablediamond
+              ar.name = "ar temp name"
+
+              $.post('/analysedata', {'loadedTables':JSON.stringify(loadedTables),
+                                        'ae1':JSON.stringify(ae_summ1),
+                                        'ae2':JSON.stringify(ae_summ2),
+                                        'ar':JSON.stringify(ar)})
+            }
+            $.get('/get_hash', function(data,status){
+              var hash = data
+              var info = getCookie(hash);
+              if(info !== ""){
+                info = JSON.parse(info)
+                loadLayout(info)
+              }
+            });
+          })
         }
     }
     requestTables.open('GET', '/tabledata', true)
     requestTables.send(null)
 
-     $.get('/get_hash', function(data,status){
-     var hash = data
-     var info = getCookie(hash);
-     if(info !== ""){
-       info = JSON.parse(info)
-       loadLayout(info)
-     }
-   });
+    
  }
 

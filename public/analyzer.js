@@ -163,7 +163,7 @@ $( document).ready(function() {
                 }
             }, this);
             ae_summ2.data = table2arr;
-            
+
             //data for ar
             var table3arr = []
             general_li[2].forEach(function(element) {
@@ -175,6 +175,10 @@ $( document).ready(function() {
             if(document.getElementById('summarized').checked == true){
                 displaySummarized(ae_summ1, ae_summ2, ar)
             }
+             $.post('/analysedata', {'loadedTables':JSON.stringify(loadedTables),
+                                        'ae1':JSON.stringify(ae_summ1),
+                                        'ae2':JSON.stringify(ae_summ2),
+                                        'ar':JSON.stringify(ar)})
           }
       });
     }else{

@@ -1,5 +1,7 @@
 ## Setup:
+
 follow the steps in http://docs.couchdb.org/en/2.0.0/install/windows.html to run a couchdb database
+
 install pip
 ```
 sudo apt-get install python-pip
@@ -9,14 +11,17 @@ install simplejson
 sudo pip install simplejson
 ```
 
-open the terminal under the milestone1 folder
-type node test.js
+open the terminal under the milestone1 folder and type
+```
+node test.js
+```
+
 go to localhost:7474 with chrome or other browsers
 
-Steps:
-enter host name, port number, database name, username and password into appropriate inputs
-press save connection to create a local project
-enter name and hit ok to save
+## Steps:
+1. enter host name, port number, database name, username and password into appropriate inputs
+2. press save connection to create a local project
+3. enter name and hit ok to save
 press cancel to return without saving information
 press select connection to view saved connections
 select list item to populate connection strings

@@ -20,6 +20,7 @@ go to localhost:7474 with chrome or other browsers
 
 ## Steps:
 1. enter host name, port number, database name, username and password into appropriate inputs
+![Original image](demo_img/login.png?raw=true)
 2. press save connection to create a local project
 3. enter name and hit ok to save
 4. press cancel to return without saving information

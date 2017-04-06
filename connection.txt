@@ -1,1 +1,0 @@
-{"hn":"test.ci9et1hjxavg.us-west-2.rds.amazonaws.com","pn":"3306","db":"testdb","un":"root","pwd":"testdbpwd"}
